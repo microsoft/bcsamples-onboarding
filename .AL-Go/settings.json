@@ -5,5 +5,7 @@
   ],
   "appFolders": [],
   "testFolders": [],
-  "bcptTestFolders": []
+  "bcptTestFolders": [],
+  "AppSourceProductId": "e7b625e8-c7b8-45bf-8985-99c69fd53c5e",
+  "AppSourceContinuousDelivery": true
 }
