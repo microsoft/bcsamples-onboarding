@@ -4,16 +4,17 @@
   "publisher": "Søren Alexandersen",
   "version": "1.0.0.0",
   "brief": "Sample app that showcase how to create a great welcome experience for Business Central customers",
-  "description": "",
+  "description": "This app show examples of using several elements of the onboarding framework for Business Central.",
   "privacyStatement": "https://go.microsoft.com/fwlink/?LinkId=834881",
-  "EULA": "",
-  "help": "",
-  "url": "",
+  "EULA": "https://github.com/microsoft/bcsamples-onboarding/blob/main/LICENSE",
+  "help": "https://github.com/microsoft/bcsamples-onboarding",
+  "url": "https://github.com/microsoft/bcsamples-onboarding",
   "logo": "",
   "dependencies": [],
   "screenshots": [],
   "platform": "22.0.0.0",
   "application": "22.1.0.0",
+  "contextSensitiveHelpUrl": "https://github.com/microsoft/bcsamples-onboarding",
   "idRanges": [
     {
       "from": 70074170,
@@ -21,7 +22,7 @@
     }
   ],
   "features": [
-    "NoImplicitWith"
+    "NoImplicitWith", "TranslationFile", "GenerateCaptions"
   ],
   "resourceExposurePolicy": {
     "allowDebugging": true,
