@@ -26,8 +26,8 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         //If the user has profiled as coming from Excel, we want to show them a checklist item that makes them feel welcomed right off the bat
         SystemShortTitleTxt: Label 'Excel users love us';
-        SystemTitleTxt: Label 'Excel users love to use Business Central';
-        SystemDescriptionTxt: Label 'See this video to learn why Excel users love Business Central for managing their business.';
+        SystemTitleTxt: Label 'Excel users love using Business Central';
+        SystemDescriptionTxt: Label 'With a seamless integration to Excel, you can work with data in Excel, and import it back into Business Central.';
 
         //Depending on the user's company profile, add a Guided Experience Item that shows we know what they care about
         UsersShortTitleTxt: Label 'So, you have 10-25 users?';
@@ -39,13 +39,15 @@ codeunit 70074170 MS_CreateWelcomeExperience
         InterestTitleTxt: Label 'Trade is a cornerstone of Business Central';
         InterestDescriptionTxt: Label 'Business Central is one of the Worlds most powerful business solutions when it comes to Basic trade. Trade can be set up in any variance you want to help you run your business processes.';
 
-        SignupContextValues: Record "Signup Context Values";
-        SignupContext: Record "Signup Context";
         GuidedExperience: Codeunit "Guided Experience";
+        GuidedExperienceType: Enum "Guided Experience Type";
         VideoCategory: Enum "Video Category";
         Checklist: Codeunit Checklist;
-        GuidedExperienceType: Enum "Guided Experience Type";
         TempAllProfile: Record "All Profile";
+        SignupContext: Record "Signup Context";
+        SignupContextValues: Record "Signup Context Values";
+        SpotlightTourType: Enum "Spotlight Tour Type";
+        SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text];
     begin
         if not SignupContextValues.Get() then
             exit;
@@ -56,9 +58,10 @@ codeunit 70074170 MS_CreateWelcomeExperience
         //Add our Guided Experience Items we want to potentially add to the checklist
         //Add the guided experience items. Note, that here we just load three different videos for the "system", "users" and "interest" questions from the profiler
         //Add the checklist items you think makes sense to greet the user with, based on their profile.
+        GetVendorListSpotlightTourDictionary(SpotlightTourTexts);
+        GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::"Vendor List", SpotlightTourType::"Open in Excel", SpotlightTourTexts);
         GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
         GuidedExperience.InsertVideo(InterestTitleTxt, InterestShortTitleTxt, InterestDescriptionTxt, 1, 'https://www.youtube.com/embed/YpWD4ZrLobI', VideoCategory::GettingStarted);
-        GuidedExperience.InsertVideo(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 1, 'https://www.youtube.com/embed/wVFZVajK2YI', VideoCategory::GettingStarted);
 
         //Now, we read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
 
@@ -68,13 +71,13 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContext.SetRange(SignupContext.Value, 'Excel');
         if SignupContext.FindSet() then begin
             Message('Signup context found:' + SignupContext.Value);
-            Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/wVFZVajK2YI', 2000, TempAllProfile, false);
+            Checklist.Insert(GuidedExperienceType::"Spotlight Tour", ObjectType::Page, Page::"Vendor List", 1000, TempAllProfile, false);
         end;
 
         //If they have told us they're looking for "Trade", let's show them something meaningful
         SignupContext.Reset();
         SignupContext.SetRange(SignupContext.KeyName, 'interest');
-        SignupContext.SetRange(SignupContext.Value, 'Basic trade');
+        SignupContext.SetRange(SignupContext.Value, 'Trade');
         if SignupContext.FindSet() then begin
             Message('Signup context found:' + SignupContext.Value);
             Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 3000, TempAllProfile, false);
@@ -127,6 +130,21 @@ codeunit 70074170 MS_CreateWelcomeExperience
         HeaderCollapsedTxt := 'Continue exploring the trial';
         DescriptionTxt := 'You just started a trial for Business Central that is based on your company profile. We hope you''ll love it!';
     end;
+
+    local procedure GetVendorListSpotlightTourDictionary(var SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])
+    var
+        AnalyseGLEntriesInExcelStep1Title: Label 'Easily analyse list data in Excel';
+        AnalyseGLEntriesInExcelStep1Descr: Label 'You can export any list to Excel - even Excel online. You can also edit data in Excel';
+        AnalyseGLEntriesInExcelStep2Title: Label 'Here you''ll find actions to open lists and cards in other applications';
+        AnalyseGLEntriesInExcelStep2Descr: Label 'Try opening this Vendor list in Excel and import it back into Business Central';
+        SpotlightTourText: Enum "Spotlight Tour Text";
+    begin
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Title, AnalyseGLEntriesInExcelStep1Title);
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Text, AnalyseGLEntriesInExcelStep1Descr);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Title, AnalyseGLEntriesInExcelStep2Title);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Text, AnalyseGLEntriesInExcelStep2Descr);
+    end;
+
 }
 
 enumextension 70074171 MS_BCSampleOnboardingApp extends "Signup Context"
