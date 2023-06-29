@@ -9,7 +9,7 @@
   "EULA": "https://github.com/microsoft/bcsamples-onboarding/blob/main/LICENSE",
   "help": "https://github.com/microsoft/bcsamples-onboarding",
   "url": "https://github.com/microsoft/bcsamples-onboarding",
-  "logo": "",
+  "logo": "../Media/Logo/logo.png",
   "dependencies": [],
   "screenshots": [],
   "platform": "22.0.0.0",
