@@ -1,7 +1,7 @@
 {
   "id": "15136d9c-faf8-4455-a0d4-04e075da9b6f",
   "name": "Onboarding Sample App",
-  "publisher": "Soren Alexandersen",
+  "publisher": "Søren Alexandersen",
   "version": "1.0.7.0",
   "brief": "Sample app that showcase how to create a great welcome experience for Business Central customers",
   "description": "This app show examples of using several elements of the onboarding framework for Business Central.",
