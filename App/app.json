@@ -14,6 +14,7 @@
   "screenshots": [],
   "platform": "22.0.0.0",
   "application": "22.1.0.0",
+  "runtime": "11.0",
   "contextSensitiveHelpUrl": "https://github.com/microsoft/bcsamples-onboarding",
   "idRanges": [
     {
