@@ -1,10 +1,20 @@
 codeunit 70074170 MS_CreateWelcomeExperience
 {
+    //This event is used to set the sign-up context.
+    //This happens at system initialization.
+    //In a normal standard trial provisioning where this app is not installed, the sign-up context is set in standard Microsoft code.
+    //In that scenario the sign-up context key/value pair is "name": "viral".
+    //But in our scenario our app is installed when the BC trial is provisioned, so we have the opportunity to set our own sign-up context.
+    //Why would we want to do that? Because the context allows us to pivot the experience. 
+    //You could even have multiple contexts. Imagine you profile potential customers on your web site and depending on their answers you load different experiences.
+    //This is managed by th sign-up context. 
+    //With the event below we can set the sign-up context when the system initializes, so that we will know later on what we should react to.
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnSetSignupContext', '', false, false)]
     local procedure SetSignupContext(SignupContext: Record "Signup Context")
     var
         SignupContextValues: Record "Signup Context Values";
     begin
+        //First, we check if BC was provisioned via a URL that contained a sign-up context name (= the name is stored in the Signup Context table)
         if not SignupContext.Get('name') then
             exit;
 
@@ -15,6 +25,8 @@ codeunit 70074170 MS_CreateWelcomeExperience
         if not SignupContextValues.IsEmpty() then
             exit;
 
+        //Now, we set our desired context. The context should identify your app. One app, one context.
+        //Note, that you can react to other key value pairs in the OnAfterLogin event if you want to do things depending on profiler answers.
         SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::BCSampleOnboardingApp;
         SignupContextValues.Insert();
     end;
@@ -39,11 +51,14 @@ codeunit 70074170 MS_CreateWelcomeExperience
         InterestTitleTxt: Label 'Trade is a cornerstone of Business Central';
         InterestDescriptionTxt: Label 'Business Central is one of the Worlds most powerful business solutions when it comes to Basic trade. Trade can be set up in any variance you want to help you run your business processes.';
 
+        //These are the variables we need to insert things into the Guided Experience Items & the checklist
         GuidedExperience: Codeunit "Guided Experience";
         GuidedExperienceType: Enum "Guided Experience Type";
         VideoCategory: Enum "Video Category";
         Checklist: Codeunit Checklist;
         TempAllProfile: Record "All Profile";
+        
+        //These are variables we need to determine the signup context and the answers from the profiling you have done before sending the user to the product (for example on your web site)
         SignupContext: Record "Signup Context";
         SignupContextValues: Record "Signup Context Values";
         SpotlightTourType: Enum "Spotlight Tour Type";
@@ -65,10 +80,29 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         //Now, we read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
 
-        //If we determine that the user signified that they came from Excel, create the checklist item from the Guided Experience Item we added above
+        /* --- DO STUFF BASED ON THE CUSTOMER PROFILE --- 
+        Here is where you check the SignupContext table for the profiler answers.
+        Imagine you have a web site where you ask for:
+        - Which system do you use today?
+        - What is your interest / would you like to see / expect to find in BC?
+        - How many users are in your company?
+
+        Based on the answers to those questions we want to show different things in the checklist, in the welcome banner texts, tours etc.
+
+        When you have the answers from your profiling (for example from a form on your web site) you must construct a URLl with a correct signupContext.
+        Read more about how to do that here: https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/onboarding-signupcontext
+        
+        If you have done this right the answers from the customer profiling will be stored in a system table, "Signup Context".
+        This means you can read them and determine what the customer answered and use those answers to pivot the experience.
+
+        Let's give the user what they expect, no? :o)
+
+        */
+
+        //If the user said they use Excel today, create the checklist item from the Guided Experience Item we added above that shows why BC is great with Excel
         SignupContext.Reset();
-        SignupContext.SetRange(SignupContext.KeyName, 'currentsystem');
-        SignupContext.SetRange(SignupContext.Value, 'Excel');
+        SignupContext.SetRange(SignupContext.KeyName, 'currentsystem'); //this key can be anything but has to match the output of your profiling, what you added to the URL based on the answers provided by the user
+        SignupContext.SetRange(SignupContext.Value, 'Excel'); //This is an excample of the profiler answer
         if SignupContext.FindSet() then begin
             Message('Signup context found:' + SignupContext.Value);
             Checklist.Insert(GuidedExperienceType::"Spotlight Tour", ObjectType::Page, Page::"Vendor List", 1000, TempAllProfile, false);
@@ -92,6 +126,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         end;
     end;
 
+    //These procedures are needed to get the roles for the Business Mangager Role Center, which we need in order to insert items into the checklist
     local procedure GetRolesForNonEvaluationCompany(var TempAllProfile: Record "All Profile" temporary)
     begin
         AddRoleToList(TempAllProfile, Page::"Business Manager Role Center");
@@ -113,6 +148,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         end;
     end;
 
+    //This event lets you override the texts on the welcome banner. Use it to create that warm fuzzy feeling for users who see the role center for the first time
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Checklist Banner", 'OnBeforeUpdateBannerLabels', '', false, false)]
     local procedure OnBeforeUpdateBannerLabels(var IsHandled: Boolean; IsEvaluationCompany: Boolean; var TitleTxt: Text; var TitleCollapsedTxt: Text; var HeaderTxt: Text; var HeaderCollapsedTxt: Text; var DescriptionTxt: Text)
     var
@@ -131,6 +167,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         DescriptionTxt := 'You just started a trial for Business Central that is based on your company profile. We hope you''ll love it!';
     end;
 
+    //Here we create the dictionary of texts used for the Spotlight tour where we call out the Excel integration (which we use on the Vendor List)
     local procedure GetVendorListSpotlightTourDictionary(var SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])
     var
         AnalyseGLEntriesInExcelStep1Title: Label 'Easily analyse list data in Excel';
@@ -147,10 +184,12 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
 }
 
+//Your app needs to define a "sign-up context" name. You need to add this to the sign-up URL, along with the profiler answers.
+//Make this something that identifies your app (but not the ID). It could include your poublisher and app names. Try to make it as unique as possible.
 enumextension 70074171 MS_BCSampleOnboardingApp extends "Signup Context"
 {
     value(70074171; BCSampleOnboardingApp)
     {
-        Caption = 'BCSamples-Onboarding-SignupContext ';
+        Caption = 'BCSamples-Onboarding';
     }
 }
