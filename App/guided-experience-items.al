@@ -31,7 +31,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContextValues.Insert();
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnAfterLogin', '', false, false)]
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"User Triggers", 'OnAfterUserInitialization', '', false, false)]
     local procedure InitializeChecklistOnAfterLogIn()
     var
         //Define the texts for the Guided Experience Items the users will see in their checklists
