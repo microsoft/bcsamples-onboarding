@@ -5,6 +5,7 @@ codeunit 70074172 InstallationCode
 
     trigger OnInstallAppPerCompany()
     begin
+        //Add things to the custom experience
         AddGuidedExperienceItems();
     end;
 
