@@ -1,40 +1,14 @@
-codeunit 70074170 MS_CreateWelcomeExperience
+codeunit 70074172 InstallationCode
 {
-    //This event is used to set the sign-up context.
-    //This happens at system initialization.
-    //In a normal standard trial provisioning where this app is not installed, the sign-up context is set in standard Microsoft code.
-    //In that scenario the sign-up context key/value pair is "name": "viral".
-    //But in our scenario our app is installed when the BC trial is provisioned, so we have the opportunity to set our own sign-up context.
-    //Why would we want to do that? Because the context allows us to pivot the experience. 
-    //You could even have multiple contexts. Imagine you profile potential customers on your web site and depending on their answers you load different experiences.
-    //This is managed by th sign-up context. 
-    //With the event below we can set the sign-up context when the system initializes, so that we will know later on what we should react to.
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnSetSignupContext', '', false, false)]
-    local procedure SetSignupContext()
-    var
-        OnboardinSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
-        SignupContextValues: Record "Signup Context Values";
-        SignupContext: Record "Signup Context";
+    Subtype = Install;
+    Access = Internal;
+
+    trigger OnInstallAppPerCompany()
     begin
-        //First, we check if BC was provisioned via a URL that contained a sign-up context name (= the name is stored in the Signup Context table)
-        if not SignupContext.Get('name') then
-            exit;
-
-        if not (LowerCase(SignupContext.Value) = OnboardinSampleValueTxt) then
-            exit;
-
-        Clear(SignupContextValues);
-        if not SignupContextValues.IsEmpty() then
-            exit;
-
-        //Now, we set our desired context. The context should identify your app. One app, one context.
-        //Note, that you can react to other key value pairs in the OnAfterLogin event if you want to do things depending on profiler answers.
-        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::BCSampleOnboardingApp;
-        SignupContextValues.Insert();
+        AddGuidedExperienceItems();
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Guided Experience", 'OnRegisterGuidedExperienceItem', '', false, false)]
-    local procedure AddChecklistItems()
+    local procedure AddGuidedExperienceItems()
     var
         //Define the texts for the Guided Experience Items the users will see in their checklists
 
@@ -128,6 +102,59 @@ codeunit 70074170 MS_CreateWelcomeExperience
         end;
     end;
 
+    //Here we create the dictionary of texts used for the Spotlight tour where we call out the Excel integration (which we use on the Vendor List)
+    local procedure GetVendorListSpotlightTourDictionary(var SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])
+    var
+        AnalyseGLEntriesInExcelStep1Title: Label 'Easily analyse list data in Excel';
+        AnalyseGLEntriesInExcelStep1Descr: Label 'You can export any list to Excel - even Excel online. You can also edit data in Excel';
+        AnalyseGLEntriesInExcelStep2Title: Label 'Here you''ll find actions to open lists and cards in other applications';
+        AnalyseGLEntriesInExcelStep2Descr: Label 'Try opening this Vendor list in Excel and import it back into Business Central';
+        SpotlightTourText: Enum "Spotlight Tour Text";
+    begin
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Title, AnalyseGLEntriesInExcelStep1Title);
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Text, AnalyseGLEntriesInExcelStep1Descr);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Title, AnalyseGLEntriesInExcelStep2Title);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Text, AnalyseGLEntriesInExcelStep2Descr);
+    end;
+}
+
+codeunit 70074170 MS_CreateWelcomeExperience
+{
+
+    //This event is used to set the sign-up context.
+    //This happens at system initialization.
+    //In a normal standard trial provisioning where this app is not installed, the sign-up context is set in standard Microsoft code.
+    //In that scenario the sign-up context key/value pair is "name": "viral".
+    //But in our scenario our app is installed when the BC trial is provisioned, so we have the opportunity to set our own sign-up context.
+    //Why would we want to do that? Because the context allows us to pivot the experience. 
+    //You could even have multiple contexts. Imagine you profile potential customers on your web site and depending on their answers you load different experiences.
+    //This is managed by th sign-up context. 
+    //With the event below we can set the sign-up context when the system initializes, so that we will know later on what we should react to.
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnSetSignupContext', '', false, false)]
+    local procedure SetSignupContext()
+    var
+        OnboardinSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
+        SignupContextValues: Record "Signup Context Values";
+        SignupContext: Record "Signup Context";
+    begin
+        //First, we check if BC was provisioned via a URL that contained a sign-up context name (= the name is stored in the Signup Context table)
+        if not SignupContext.Get('name') then
+            exit;
+
+        if not (LowerCase(SignupContext.Value) = OnboardinSampleValueTxt) then
+            exit;
+
+        Clear(SignupContextValues);
+        if not SignupContextValues.IsEmpty() then
+            exit;
+
+        //Now, we set our desired context. The context should identify your app. One app, one context.
+        //Note, that you can react to other key value pairs in the OnAfterLogin event if you want to do things depending on profiler answers.
+        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::BCSampleOnboardingApp;
+        SignupContextValues.Insert();
+    end;
+
+
     //These procedures are needed to get the roles for the Business Mangager Role Center, which we need in order to insert items into the checklist
     local procedure GetRolesForNonEvaluationCompany(var TempAllProfile: Record "All Profile" temporary)
     begin
@@ -163,27 +190,11 @@ codeunit 70074170 MS_CreateWelcomeExperience
         User.FindFirst();
 
         TitleTxt := 'Welcome ' + User."Full Name" + '!';
-        TitleCollapsedTxt := 'Title Collap Text';
+        TitleCollapsedTxt := 'Continue your experience';
         HeaderTxt := 'The last business solution you''ll ever need';
         HeaderCollapsedTxt := 'Continue exploring the trial';
         DescriptionTxt := 'You just started a trial for Business Central that is based on your company profile. We hope you''ll love it!';
     end;
-
-    //Here we create the dictionary of texts used for the Spotlight tour where we call out the Excel integration (which we use on the Vendor List)
-    local procedure GetVendorListSpotlightTourDictionary(var SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])
-    var
-        AnalyseGLEntriesInExcelStep1Title: Label 'Easily analyse list data in Excel';
-        AnalyseGLEntriesInExcelStep1Descr: Label 'You can export any list to Excel - even Excel online. You can also edit data in Excel';
-        AnalyseGLEntriesInExcelStep2Title: Label 'Here you''ll find actions to open lists and cards in other applications';
-        AnalyseGLEntriesInExcelStep2Descr: Label 'Try opening this Vendor list in Excel and import it back into Business Central';
-        SpotlightTourText: Enum "Spotlight Tour Text";
-    begin
-        SpotlightTourTexts.Add(SpotlightTourText::Step1Title, AnalyseGLEntriesInExcelStep1Title);
-        SpotlightTourTexts.Add(SpotlightTourText::Step1Text, AnalyseGLEntriesInExcelStep1Descr);
-        SpotlightTourTexts.Add(SpotlightTourText::Step2Title, AnalyseGLEntriesInExcelStep2Title);
-        SpotlightTourTexts.Add(SpotlightTourText::Step2Text, AnalyseGLEntriesInExcelStep2Descr);
-    end;
-
 }
 
 //Your app needs to define a "sign-up context" name. You need to add this to the sign-up URL, along with the profiler answers.
