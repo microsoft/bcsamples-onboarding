@@ -39,7 +39,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         //If the user has profiled as coming from Excel, we want to show them a checklist item that makes them feel welcomed right off the bat
         SystemShortTitleTxt: Label 'Excel users love us';
         SystemTitleTxt: Label 'Excel users love using Business Central';
-        SystemDescriptionTxt: Label 'With a seamless integration to Excel, you can work with data in Excel, and import it back into Business Central.';
+        SystemDescriptionTxt: Label 'With a seamless integration to Excel, you can easily work with data in Excel, and even import it back into Business Central. Great for maniuplating lists of data.';
 
         //Depending on the user's company profile, add a Guided Experience Item that shows we know what they care about
         UsersShortTitleTxt: Label 'So, you have 10-25 users?';
@@ -57,7 +57,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         VideoCategory: Enum "Video Category";
         Checklist: Codeunit Checklist;
         TempAllProfile: Record "All Profile";
-        
+
         //These are variables we need to determine the signup context and the answers from the profiling you have done before sending the user to the product (for example on your web site)
         SignupContext: Record "Signup Context";
         SignupContextValues: Record "Signup Context Values";
