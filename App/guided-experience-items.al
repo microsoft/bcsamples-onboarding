@@ -15,10 +15,10 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContextValues: Record "Signup Context Values";
     begin
         //First, we check if BC was provisioned via a URL that contained a sign-up context name (= the name is stored in the Signup Context table)
-        if not SignupContext.Get('name') then
+        if not SignupContextValues.Get('name') then
             exit;
 
-        if not (LowerCase(SignupContext.Value) = 'name') then
+        if not (LowerCase(SignupContextValues."Primary Key") = 'name') then
             exit;
 
         Clear(SignupContextValues);
