@@ -80,7 +80,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         //Now, we read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
 
-        /* --- DO STUFF BASED ON THE CUSTOMER PROFILE --- 
+        /* --- DO STUFF BASED ON THE CUSTOMER PROFILE ---  
         Here is where you check the SignupContext table for the profiler answers.
         Imagine you have a web site where you ask for:
         - Which system do you use today?
