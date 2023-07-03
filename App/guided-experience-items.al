@@ -4,9 +4,15 @@ codeunit 70074172 MS_InstallationCode
     Access = Internal;
 
     trigger OnInstallAppPerCompany()
+    var
+        Company: Record Company;
     begin
-        //Add things to the custom experience
-        AddGuidedExperienceItems();
+        //Add things to the custom experience in the eval company
+        Company.Reset();
+        Company.SetRange(Company."Evaluation Company", true);
+        if Company.FindFirst() then begin
+            AddGuidedExperienceItems();
+        end;
     end;
 
     local procedure AddGuidedExperienceItems()
@@ -81,7 +87,6 @@ codeunit 70074172 MS_InstallationCode
         SignupContext.SetRange(SignupContext.KeyName, 'currentsystem'); //this key can be anything but has to match the output of your profiling, what you added to the URL based on the answers provided by the user
         SignupContext.SetRange(SignupContext.Value, 'Excel'); //This is an excample of the profiler answer
         if SignupContext.FindSet() then begin
-            Message('Signup context found:' + SignupContext.Value);
             Checklist.Insert(GuidedExperienceType::"Spotlight Tour", ObjectType::Page, Page::"Vendor List", 1000, TempAllProfile, false);
         end;
 
@@ -90,7 +95,6 @@ codeunit 70074172 MS_InstallationCode
         SignupContext.SetRange(SignupContext.KeyName, 'interest');
         SignupContext.SetRange(SignupContext.Value, 'Trade');
         if SignupContext.FindSet() then begin
-            Message('Signup context found:' + SignupContext.Value);
             Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 3000, TempAllProfile, false);
         end;
 
@@ -116,6 +120,28 @@ codeunit 70074172 MS_InstallationCode
         SpotlightTourTexts.Add(SpotlightTourText::Step1Text, AnalyseGLEntriesInExcelStep1Descr);
         SpotlightTourTexts.Add(SpotlightTourText::Step2Title, AnalyseGLEntriesInExcelStep2Title);
         SpotlightTourTexts.Add(SpotlightTourText::Step2Text, AnalyseGLEntriesInExcelStep2Descr);
+    end;
+
+    //These procedures are needed to get the roles for the Business Mangager Role Center, which we need in order to insert items into the checklist
+    local procedure GetRolesForNonEvaluationCompany(var TempAllProfile: Record "All Profile" temporary)
+    begin
+        AddRoleToList(TempAllProfile, Page::"Business Manager Role Center");
+    end;
+
+    local procedure AddRoleToList(var TempAllProfile: Record "All Profile" temporary; RoleCenterID: Integer)
+    var
+        AllProfile: Record "All Profile";
+    begin
+        AllProfile.SetRange("Role Center ID", RoleCenterID);
+        AddRoleToList(AllProfile, TempAllProfile);
+    end;
+
+    local procedure AddRoleToList(var AllProfile: Record "All Profile"; var TempAllProfile: Record "All Profile" temporary)
+    begin
+        if AllProfile.FindFirst() then begin
+            TempAllProfile.TransferFields(AllProfile);
+            TempAllProfile.Insert();
+        end;
     end;
 }
 
@@ -155,28 +181,6 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContextValues.Insert();
     end;
 
-
-    //These procedures are needed to get the roles for the Business Mangager Role Center, which we need in order to insert items into the checklist
-    local procedure GetRolesForNonEvaluationCompany(var TempAllProfile: Record "All Profile" temporary)
-    begin
-        AddRoleToList(TempAllProfile, Page::"Business Manager Role Center");
-    end;
-
-    local procedure AddRoleToList(var TempAllProfile: Record "All Profile" temporary; RoleCenterID: Integer)
-    var
-        AllProfile: Record "All Profile";
-    begin
-        AllProfile.SetRange("Role Center ID", RoleCenterID);
-        AddRoleToList(AllProfile, TempAllProfile);
-    end;
-
-    local procedure AddRoleToList(var AllProfile: Record "All Profile"; var TempAllProfile: Record "All Profile" temporary)
-    begin
-        if AllProfile.FindFirst() then begin
-            TempAllProfile.TransferFields(AllProfile);
-            TempAllProfile.Insert();
-        end;
-    end;
 
     //This event lets you override the texts on the welcome banner. Use it to create that warm fuzzy feeling for users who see the role center for the first time
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Checklist Banner", 'OnBeforeUpdateBannerLabels', '', false, false)]
