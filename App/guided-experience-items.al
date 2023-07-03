@@ -10,15 +10,17 @@ codeunit 70074170 MS_CreateWelcomeExperience
     //This is managed by th sign-up context. 
     //With the event below we can set the sign-up context when the system initializes, so that we will know later on what we should react to.
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnSetSignupContext', '', false, false)]
-    local procedure SetSignupContext(SignupContext: Record "Signup Context")
+    local procedure SetSignupContext()
     var
+        OnboardinSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
         SignupContextValues: Record "Signup Context Values";
+        SignupContext: Record "Signup Context";
     begin
         //First, we check if BC was provisioned via a URL that contained a sign-up context name (= the name is stored in the Signup Context table)
-        if not SignupContextValues.Get('name') then
+        if not SignupContext.Get('name') then
             exit;
 
-        if not (LowerCase(SignupContextValues."Primary Key") = 'name') then
+        if not (LowerCase(SignupContext.Value) = OnboardinSampleValueTxt) then
             exit;
 
         Clear(SignupContextValues);
