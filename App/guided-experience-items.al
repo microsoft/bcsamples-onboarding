@@ -1,4 +1,4 @@
-codeunit 70074172 InstallationCode
+codeunit 70074172 MS_InstallationCode
 {
     Subtype = Install;
     Access = Internal;
