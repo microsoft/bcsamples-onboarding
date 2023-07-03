@@ -1,14 +1,12 @@
 # Project
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+Welcome to the repo Onboarding sample app for Business Central.
+This intention with this code is to:
 
-As the maintainer of this project, please make a few updates:
+- Inspire ISVs and developers to use elements of the onboarding framework
+- Add interesting scenarios that helps ISVs and resellers onboard customers faster
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+Feel free to contribute to this repo!
 
 ## Contributing
 
