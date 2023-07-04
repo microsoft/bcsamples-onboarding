@@ -29,6 +29,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
     //You could even have multiple contexts. Imagine you profile potential customers on your web site and depending on their answers you load different experiences.
     //This is managed by th sign-up context. 
     //With the event below we can set the sign-up context when the system initializes, so that we will know later on what we should react to.
+    //Think of the signup context being a result of company profiling = determines _which_ app and _which_business scenario to load (industry, etvc.)
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnSetSignupContext', '', false, false)]
     local procedure SetSignupContext()
     var
@@ -54,7 +55,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
             exit;
 
         //Now, we set our desired context. The context should identify your app. One app, one context.
-        //Note, that you can react to other key value pairs in the OnAfterLogin event if you want to do things depending on profiler answers.
+        //Note, that you can react to other key value pairs if you want to do things depending on profiler answers.
         SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::BCSampleOnboardingApp;
         SignupContextValues.Insert();
 
@@ -92,7 +93,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContext.SetRange(SignupContext.KeyName, 'currentsystem'); //this key can be anything but has to match the output of your profiling, what you added to the URL based on the answers provided by the user
         SignupContext.SetRange(SignupContext.Value, 'Excel'); //This is an excample of the profiler answer
         if SignupContext.FindSet() then begin
-            Checklist.Insert(GuidedExperienceType::"Spotlight Tour", ObjectType::Page, Page::"Vendor List", 1000, TempAllProfile, false);
+            Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 1000, TempAllProfile, false);
         end;
 
         //If they have told us they're looking for "Trade", let's show them something meaningful
@@ -175,6 +176,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
 //Your app needs to define a "sign-up context" name. You need to add this to the sign-up URL, along with the profiler answers.
 //Make this something that identifies your app (but not the ID). It could include your poublisher and app names. Try to make it as unique as possible.
+//The sign-up context is useful if other apps want to align their experience to the context. 
 enumextension 70074171 MS_BCSampleOnboardingApp extends "Signup Context"
 {
     value(70074171; BCSampleOnboardingApp)
