@@ -1,5 +1,24 @@
 codeunit 70074170 MS_CreateWelcomeExperience
 {
+    var
+        //Define the texts for the Guided Experience Items the users will see in their checklists
+        //If the user has profiled as coming from Excel, we want to show them a checklist item that makes them feel welcomed right off the bat
+        SystemShortTitleTxt: Label 'Excel users love us';
+        SystemTitleTxt: Label 'Excel users love using Business Central';
+        SystemDescriptionTxt: Label 'With a seamless integration to Excel, you can easily work with data in Excel, and even import it back into Business Central. Great for maniuplating lists of data.';
+
+        //Depending on the user's company profile, add a Guided Experience Item that shows we know what they care about
+        UsersShortTitleTxt: Label 'So, you have 10-25 users?';
+        UsersTitleTxt: Label 'Your company is a great fit for Business Central';
+        UsersDescriptionTxt: Label 'Business Central is great for companies with a user base of 10-25, but it does not stop there. Business Central empowers you to grow your business. See the video to learn how.';
+
+        //When the user answered questions in the profiler (on your web site), ask them what they're looking for, and load a Guided Experience Item that confirms they've gone to the right place
+        InterestShortTitleTxt: Label 'Trade is in our DNA';
+        InterestTitleTxt: Label 'Trade is a cornerstone of Business Central';
+        InterestDescriptionTxt: Label 'Business Central is one of the Worlds most powerful business solutions when it comes to Basic trade. Trade can be set up in any variance you want to help you run your business processes.';
+
+        OnboardinSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
+
 
     //This event is used to set the sign-up context.
     //This happens at system initialization.
@@ -13,9 +32,15 @@ codeunit 70074170 MS_CreateWelcomeExperience
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnSetSignupContext', '', false, false)]
     local procedure SetSignupContext()
     var
-        OnboardinSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
         SignupContextValues: Record "Signup Context Values";
         SignupContext: Record "Signup Context";
+        SpotlightTourType: Enum "Spotlight Tour Type";
+        SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text];
+        GuidedExperience: Codeunit "Guided Experience";
+        GuidedExperienceType: Enum "Guided Experience Type";
+        VideoCategory: Enum "Video Category";
+        Checklist: Codeunit Checklist;
+        TempAllProfile: Record "All Profile";
     begin
         //First, we check if BC was provisioned via a URL that contained a sign-up context name (= the name is stored in the Signup Context table)
         if not SignupContext.Get('name') then
@@ -32,66 +57,6 @@ codeunit 70074170 MS_CreateWelcomeExperience
         //Note, that you can react to other key value pairs in the OnAfterLogin event if you want to do things depending on profiler answers.
         SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::BCSampleOnboardingApp;
         SignupContextValues.Insert();
-    end;
-
-
-    //This event lets you override the texts on the welcome banner. Use it to create that warm fuzzy feeling for users who see the role center for the first time
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Checklist Banner", 'OnBeforeUpdateBannerLabels', '', false, false)]
-    local procedure OnBeforeUpdateBannerLabels(var IsHandled: Boolean; IsEvaluationCompany: Boolean; var TitleTxt: Text; var TitleCollapsedTxt: Text; var HeaderTxt: Text; var HeaderCollapsedTxt: Text; var DescriptionTxt: Text)
-    var
-        User: Record User;
-    begin
-        IsHandled := true;
-
-        User.Reset();
-        User.SetRange(User."User Security ID", Database.UserSecurityId());
-        User.FindFirst();
-
-        TitleTxt := 'Welcome ' + User."Full Name" + '!';
-        TitleCollapsedTxt := 'Continue your experience';
-        HeaderTxt := 'The last business solution you''ll ever need';
-        HeaderCollapsedTxt := 'Continue exploring the trial';
-        DescriptionTxt := 'You just started a trial for Business Central that is based on your company profile. We hope you''ll love it!';
-    end;
-
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Guided Experience", 'OnRegisterGuidedExperienceItem', '', false, false)]
-    local procedure AddGuidedExperienceItems()
-    var
-        //Define the texts for the Guided Experience Items the users will see in their checklists
-
-        //If the user has profiled as coming from Excel, we want to show them a checklist item that makes them feel welcomed right off the bat
-        SystemShortTitleTxt: Label 'Excel users love us';
-        SystemTitleTxt: Label 'Excel users love using Business Central';
-        SystemDescriptionTxt: Label 'With a seamless integration to Excel, you can easily work with data in Excel, and even import it back into Business Central. Great for maniuplating lists of data.';
-
-        //Depending on the user's company profile, add a Guided Experience Item that shows we know what they care about
-        UsersShortTitleTxt: Label 'So, you have 10-25 users?';
-        UsersTitleTxt: Label 'Your company is a great fit for Business Central';
-        UsersDescriptionTxt: Label 'Business Central is great for companies with a user base of 10-25, but it does not stop there. Business Central empowers you to grow your business. See the video to learn how.';
-
-        //When the user answered questions in the profiler (on your web site), ask them what they're looking for, and load a Guided Experience Item that confirms they've gone to the right place
-        InterestShortTitleTxt: Label 'Trade is in our DNA';
-        InterestTitleTxt: Label 'Trade is a cornerstone of Business Central';
-        InterestDescriptionTxt: Label 'Business Central is one of the Worlds most powerful business solutions when it comes to Basic trade. Trade can be set up in any variance you want to help you run your business processes.';
-
-        //These are the variables we need to insert things into the Guided Experience Items & the checklist
-        GuidedExperience: Codeunit "Guided Experience";
-        GuidedExperienceType: Enum "Guided Experience Type";
-        VideoCategory: Enum "Video Category";
-        Checklist: Codeunit Checklist;
-        TempAllProfile: Record "All Profile";
-
-        //These are variables we need to determine the signup context and the answers from the profiling you have done before sending the user to the product (for example on your web site)
-        SignupContext: Record "Signup Context";
-        SignupContextValues: Record "Signup Context Values";
-        SpotlightTourType: Enum "Spotlight Tour Type";
-        SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text];
-    begin
-        if not SignupContextValues.Get() then
-            exit;
-
-        if not (SignupContextValues."Signup Context" = SignupContextValues."Signup Context"::BCSampleOnboardingApp) then
-            exit;
 
         //Add our Guided Experience Items we want to potentially add to the checklist
         //Add the guided experience items. Note, that here we just load three different videos for the "system", "users" and "interest" questions from the profiler
@@ -145,7 +110,29 @@ codeunit 70074170 MS_CreateWelcomeExperience
         if SignupContext.FindSet() then begin
             Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 1000, TempAllProfile, false);
         end;
+
     end;
+
+
+    //This event lets you override the texts on the welcome banner. Use it to create that warm fuzzy feeling for users who see the role center for the first time
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Checklist Banner", 'OnBeforeUpdateBannerLabels', '', false, false)]
+    local procedure OnBeforeUpdateBannerLabels(var IsHandled: Boolean; IsEvaluationCompany: Boolean; var TitleTxt: Text; var TitleCollapsedTxt: Text; var HeaderTxt: Text; var HeaderCollapsedTxt: Text; var DescriptionTxt: Text)
+    var
+        User: Record User;
+    begin
+        IsHandled := true;
+
+        User.Reset();
+        User.SetRange(User."User Security ID", Database.UserSecurityId());
+        User.FindFirst();
+
+        TitleTxt := 'Welcome ' + User."Full Name" + '!';
+        TitleCollapsedTxt := 'Continue your experience';
+        HeaderTxt := 'The last business solution you''ll ever need';
+        HeaderCollapsedTxt := 'Continue exploring the trial';
+        DescriptionTxt := 'You just started a trial for Business Central that is based on your company profile. We hope you''ll love it!';
+    end;
+
 
     //Here we create the dictionary of texts used for the Spotlight tour where we call out the Excel integration (which we use on the Vendor List)
     local procedure GetVendorListSpotlightTourDictionary(var SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])
