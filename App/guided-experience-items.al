@@ -1,20 +1,60 @@
-codeunit 70074172 MS_InstallationCode
+codeunit 70074170 MS_CreateWelcomeExperience
 {
-    Subtype = Install;
-    Access = Internal;
 
-    trigger OnInstallAppPerCompany()
+    //This event is used to set the sign-up context.
+    //This happens at system initialization.
+    //In a normal standard trial provisioning where this app is not installed, the sign-up context is set in standard Microsoft code.
+    //In that scenario the sign-up context key/value pair is "name": "viral".
+    //But in our scenario our app is installed when the BC trial is provisioned, so we have the opportunity to set our own sign-up context.
+    //Why would we want to do that? Because the context allows us to pivot the experience. 
+    //You could even have multiple contexts. Imagine you profile potential customers on your web site and depending on their answers you load different experiences.
+    //This is managed by th sign-up context. 
+    //With the event below we can set the sign-up context when the system initializes, so that we will know later on what we should react to.
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnSetSignupContext', '', false, false)]
+    local procedure SetSignupContext()
     var
-        Company: Record Company;
+        OnboardinSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
+        SignupContextValues: Record "Signup Context Values";
+        SignupContext: Record "Signup Context";
     begin
-        //Add things to the custom experience in the eval company
-        Company.Reset();
-        Company.SetRange(Company."Evaluation Company", true);
-        if Company.FindFirst() then begin
-            AddGuidedExperienceItems();
-        end;
+        //First, we check if BC was provisioned via a URL that contained a sign-up context name (= the name is stored in the Signup Context table)
+        if not SignupContext.Get('name') then
+            exit;
+
+        if not (LowerCase(SignupContext.Value) = OnboardinSampleValueTxt) then
+            exit;
+
+        Clear(SignupContextValues);
+        if not SignupContextValues.IsEmpty() then
+            exit;
+
+        //Now, we set our desired context. The context should identify your app. One app, one context.
+        //Note, that you can react to other key value pairs in the OnAfterLogin event if you want to do things depending on profiler answers.
+        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::BCSampleOnboardingApp;
+        SignupContextValues.Insert();
     end;
 
+
+    //This event lets you override the texts on the welcome banner. Use it to create that warm fuzzy feeling for users who see the role center for the first time
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Checklist Banner", 'OnBeforeUpdateBannerLabels', '', false, false)]
+    local procedure OnBeforeUpdateBannerLabels(var IsHandled: Boolean; IsEvaluationCompany: Boolean; var TitleTxt: Text; var TitleCollapsedTxt: Text; var HeaderTxt: Text; var HeaderCollapsedTxt: Text; var DescriptionTxt: Text)
+    var
+        User: Record User;
+    begin
+        IsHandled := true;
+
+        User.Reset();
+        User.SetRange(User."User Security ID", Database.UserSecurityId());
+        User.FindFirst();
+
+        TitleTxt := 'Welcome ' + User."Full Name" + '!';
+        TitleCollapsedTxt := 'Continue your experience';
+        HeaderTxt := 'The last business solution you''ll ever need';
+        HeaderCollapsedTxt := 'Continue exploring the trial';
+        DescriptionTxt := 'You just started a trial for Business Central that is based on your company profile. We hope you''ll love it!';
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Guided Experience", 'OnRegisterGuidedExperienceItem', '', false, false)]
     local procedure AddGuidedExperienceItems()
     var
         //Define the texts for the Guided Experience Items the users will see in their checklists
@@ -143,63 +183,7 @@ codeunit 70074172 MS_InstallationCode
             TempAllProfile.Insert();
         end;
     end;
-}
 
-codeunit 70074170 MS_CreateWelcomeExperience
-{
-
-    //This event is used to set the sign-up context.
-    //This happens at system initialization.
-    //In a normal standard trial provisioning where this app is not installed, the sign-up context is set in standard Microsoft code.
-    //In that scenario the sign-up context key/value pair is "name": "viral".
-    //But in our scenario our app is installed when the BC trial is provisioned, so we have the opportunity to set our own sign-up context.
-    //Why would we want to do that? Because the context allows us to pivot the experience. 
-    //You could even have multiple contexts. Imagine you profile potential customers on your web site and depending on their answers you load different experiences.
-    //This is managed by th sign-up context. 
-    //With the event below we can set the sign-up context when the system initializes, so that we will know later on what we should react to.
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnSetSignupContext', '', false, false)]
-    local procedure SetSignupContext()
-    var
-        OnboardinSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
-        SignupContextValues: Record "Signup Context Values";
-        SignupContext: Record "Signup Context";
-    begin
-        //First, we check if BC was provisioned via a URL that contained a sign-up context name (= the name is stored in the Signup Context table)
-        if not SignupContext.Get('name') then
-            exit;
-
-        if not (LowerCase(SignupContext.Value) = OnboardinSampleValueTxt) then
-            exit;
-
-        Clear(SignupContextValues);
-        if not SignupContextValues.IsEmpty() then
-            exit;
-
-        //Now, we set our desired context. The context should identify your app. One app, one context.
-        //Note, that you can react to other key value pairs in the OnAfterLogin event if you want to do things depending on profiler answers.
-        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::BCSampleOnboardingApp;
-        SignupContextValues.Insert();
-    end;
-
-
-    //This event lets you override the texts on the welcome banner. Use it to create that warm fuzzy feeling for users who see the role center for the first time
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Checklist Banner", 'OnBeforeUpdateBannerLabels', '', false, false)]
-    local procedure OnBeforeUpdateBannerLabels(var IsHandled: Boolean; IsEvaluationCompany: Boolean; var TitleTxt: Text; var TitleCollapsedTxt: Text; var HeaderTxt: Text; var HeaderCollapsedTxt: Text; var DescriptionTxt: Text)
-    var
-        User: Record User;
-    begin
-        IsHandled := true;
-
-        User.Reset();
-        User.SetRange(User."User Security ID", Database.UserSecurityId());
-        User.FindFirst();
-
-        TitleTxt := 'Welcome ' + User."Full Name" + '!';
-        TitleCollapsedTxt := 'Continue your experience';
-        HeaderTxt := 'The last business solution you''ll ever need';
-        HeaderCollapsedTxt := 'Continue exploring the trial';
-        DescriptionTxt := 'You just started a trial for Business Central that is based on your company profile. We hope you''ll love it!';
-    end;
 }
 
 //Your app needs to define a "sign-up context" name. You need to add this to the sign-up URL, along with the profiler answers.
