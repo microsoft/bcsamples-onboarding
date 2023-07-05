@@ -5,7 +5,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         //If the user has profiled as coming from Excel, we want to show them a checklist item that makes them feel welcomed right off the bat
         SystemShortTitleTxt: Label 'Excel users love us';
         SystemTitleTxt: Label 'Excel users love using Business Central';
-        SystemDescriptionTxt: Label 'With a seamless integration to Excel, you can easily work with data in Excel, and even import it back into Business Central. Great for maniuplating lists of data.';
+        SystemDescriptionTxt: Label 'With a seamless integration to Excel, you can easily work with data in Excel, and even import it back into Business Central. Great for manipulating lists of data.';
 
         //Depending on the user's company profile, add a Guided Experience Item that shows we know what they care about
         UsersShortTitleTxt: Label 'So, you have 10-25 users?';
@@ -17,7 +17,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         InterestTitleTxt: Label 'Trade is a cornerstone of Business Central';
         InterestDescriptionTxt: Label 'Business Central is one of the Worlds most powerful business solutions when it comes to Basic trade. Trade can be set up in any variance you want to help you run your business processes.';
 
-        OnboardinSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
+        OnboardingSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
 
 
     //This event is used to set the sign-up context.
@@ -29,7 +29,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
     //You could even have multiple contexts. Imagine you profile potential customers on your web site and depending on their answers you load different experiences.
     //This is managed by th sign-up context. 
     //With the event below we can set the sign-up context when the system initializes, so that we will know later on what we should react to.
-    //Think of the signup context being a result of company profiling = determines _which_ app and _which_business scenario to load (industry, etvc.)
+    //Think of the signup context being a result of company profiling = determines _which_ app and _which_business scenario to load (industry, etc.)
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"System Initialization", 'OnSetSignupContext', '', false, false)]
     local procedure SetSignupContext()
     var
@@ -47,7 +47,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         if not SignupContext.Get('name') then
             exit;
 
-        if not (LowerCase(SignupContext.Value) = OnboardinSampleValueTxt) then
+        if not (LowerCase(SignupContext.Value) = OnboardingSampleValueTxt) then
             exit;
 
         Clear(SignupContextValues);
@@ -78,7 +78,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         Based on the answers to those questions we want to show different things in the checklist, in the welcome banner texts, tours etc.
 
-        When you have the answers from your profiling (for example from a form on your web site) you must construct a URLl with a correct signupContext.
+        When you have the answers from your profiling (for example from a form on your web site) you must construct a URL with a correct signupContext.
         Read more about how to do that here: https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/onboarding-signupcontext
         
         If you have done this right the answers from the customer profiling will be stored in a system table, "Signup Context".
@@ -91,7 +91,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         //If the user said they use Excel today, create the checklist item from the Guided Experience Item we added above that shows why BC is great with Excel
         SignupContext.Reset();
         SignupContext.SetRange(SignupContext.KeyName, 'currentsystem'); //this key can be anything but has to match the output of your profiling, what you added to the URL based on the answers provided by the user
-        SignupContext.SetRange(SignupContext.Value, 'Excel'); //This is an excample of the profiler answer
+        SignupContext.SetRange(SignupContext.Value, 'Excel'); //This is an example of the profiler answer
         if SignupContext.FindSet() then begin
             Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 1000, TempAllProfile, false);
         end;
@@ -150,7 +150,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SpotlightTourTexts.Add(SpotlightTourText::Step2Text, AnalyseGLEntriesInExcelStep2Descr);
     end;
 
-    //These procedures are needed to get the roles for the Business Mangager Role Center, which we need in order to insert items into the checklist
+    //These procedures are needed to get the roles for the Business Manager Role Center, which we need in order to insert items into the checklist
     local procedure GetRolesForNonEvaluationCompany(var TempAllProfile: Record "All Profile" temporary)
     begin
         AddRoleToList(TempAllProfile, Page::"Business Manager Role Center");
@@ -175,7 +175,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
 }
 
 //Your app needs to define a "sign-up context" name. You need to add this to the sign-up URL, along with the profiler answers.
-//Make this something that identifies your app (but not the ID). It could include your poublisher and app names. Try to make it as unique as possible.
+//Make this something that identifies your app (but not the ID). It could include your publisher and app names. Try to make it as unique as possible.
 //The sign-up context is useful if other apps want to align their experience to the context. 
 enumextension 70074171 MS_BCSampleOnboardingApp extends "Signup Context"
 {
