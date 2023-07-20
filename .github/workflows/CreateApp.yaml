@@ -48,20 +48,20 @@ jobs:
 
       - name: Initialize the workflow
         id: init
-        uses: freddydk/AL-Go/Actions/WorkflowInitialize@onboard
+        uses: microsoft/AL-Go-Actions/WorkflowInitialize@preview
         with:
           shell: powershell
           eventId: "DO0092"
 
       - name: Read settings
-        uses: freddydk/AL-Go/Actions/ReadSettings@onboard
+        uses: microsoft/AL-Go-Actions/ReadSettings@preview
         with:
           shell: powershell
           parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
           get: type
 
       - name: Creating a new app
-        uses: freddydk/AL-Go/Actions/CreateApp@onboard
+        uses: microsoft/AL-Go-Actions/CreateApp@preview
         with:
           shell: powershell
           parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
@@ -75,7 +75,7 @@ jobs:
 
       - name: Finalize the workflow
         if: always()
-        uses: freddydk/AL-Go/Actions/WorkflowPostProcess@onboard
+        uses: microsoft/AL-Go-Actions/WorkflowPostProcess@preview
         with:
           shell: powershell
           eventId: "DO0092"

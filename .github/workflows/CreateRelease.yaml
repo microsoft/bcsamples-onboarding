@@ -66,14 +66,14 @@ jobs:
 
       - name: Initialize the workflow
         id: init
-        uses: freddydk/AL-Go/Actions/WorkflowInitialize@onboard
+        uses: microsoft/AL-Go-Actions/WorkflowInitialize@preview
         with:
           shell: powershell
           eventId: "DO0094"
 
       - name: Read settings
         id: ReadSettings
-        uses: freddydk/AL-Go/Actions/ReadSettings@onboard
+        uses: microsoft/AL-Go-Actions/ReadSettings@preview
         with:
           shell: powershell
           parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
@@ -81,12 +81,12 @@ jobs:
 
       - name: Determine Projects
         id: determineProjects
-        uses: freddydk/AL-Go/Actions/DetermineProjectsToBuild@onboard
+        uses: microsoft/AL-Go-Actions/DetermineProjectsToBuild@preview
         with:
           shell: powershell
 
       - name: Check for updates to AL-Go system files
-        uses: freddydk/AL-Go/Actions/CheckForUpdates@onboard
+        uses: microsoft/AL-Go-Actions/CheckForUpdates@preview
         with:
           shell: powershell
           parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
@@ -171,11 +171,12 @@ jobs:
 
       - name: Prepare release notes
         id: createreleasenotes
-        uses: freddydk/AL-Go/Actions/CreateReleaseNotes@onboard
+        uses: microsoft/AL-Go-Actions/CreateReleaseNotes@preview
         with:
           shell: powershell
           parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
           tag_name: ${{ github.event.inputs.tag }}
+          target_commitish: ${{ steps.analyzeartifacts.outputs.commitish }}
 
       - name: Create release
         uses: actions/github-script@v6
@@ -213,13 +214,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Read settings
-        uses: freddydk/AL-Go/Actions/ReadSettings@onboard
+        uses: microsoft/AL-Go-Actions/ReadSettings@preview
         with:
           shell: powershell
           parentTelemetryScopeJson: ${{ needs.CreateRelease.outputs.telemetryScopeJson }}
 
       - name: Read secrets
-        uses: freddydk/AL-Go/Actions/ReadSecrets@onboard
+        uses: microsoft/AL-Go-Actions/ReadSecrets@preview
         env:
           secrets: ${{ toJson(secrets) }}
         with:
@@ -271,7 +272,7 @@ jobs:
           Add-Content -Path $env:GITHUB_OUTPUT -Value "nuGetContext=$nuGetContext"
 
       - name: Deliver to NuGet
-        uses: freddydk/AL-Go/Actions/Deliver@onboard
+        uses: microsoft/AL-Go-Actions/Deliver@preview
         if: ${{ steps.nuGetContext.outputs.nuGetContext }}
         env:
           deliveryContext: ${{ steps.nuGetContext.outputs.nuGetContext }}
@@ -296,7 +297,7 @@ jobs:
           Add-Content -Path $env:GITHUB_OUTPUT -Value "storageContext=$storageContext"
 
       - name: Deliver to Storage
-        uses: freddydk/AL-Go/Actions/Deliver@onboard
+        uses: microsoft/AL-Go-Actions/Deliver@preview
         if: ${{ steps.storageContext.outputs.storageContext }}
         env:
           deliveryContext: ${{ steps.storageContext.outputs.storageContext }}
@@ -334,7 +335,7 @@ jobs:
     needs: [ CreateRelease, UploadArtifacts ]
     steps:
       - name: Update Version Number
-        uses: freddydk/AL-Go/Actions/IncrementVersionNumber@onboard
+        uses: microsoft/AL-Go-Actions/IncrementVersionNumber@preview
         with:
           shell: powershell
           parentTelemetryScopeJson: ${{ needs.CreateRelease.outputs.telemetryScopeJson }}
@@ -351,7 +352,7 @@ jobs:
 
       - name: Finalize the workflow
         id: PostProcess
-        uses: freddydk/AL-Go/Actions/WorkflowPostProcess@onboard
+        uses: microsoft/AL-Go-Actions/WorkflowPostProcess@preview
         with:
           shell: powershell
           eventId: "DO0094"
