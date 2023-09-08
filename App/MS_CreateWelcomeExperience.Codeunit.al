@@ -140,7 +140,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         TitleTxt := 'Welcome ' + User."Full Name" + '!';
         TitleCollapsedTxt := 'Continue your experience';
-        HeaderTxt := 'So, you are into shoes? So are we!';
+        HeaderTxt := 'So, you are into shoes? So are we! 👟';
         HeaderCollapsedTxt := 'Continue exploring the trial';
         DescriptionTxt := 'You just started a trial for Business Central with Shoe Management. We hope you''ll love it!';
     end;
