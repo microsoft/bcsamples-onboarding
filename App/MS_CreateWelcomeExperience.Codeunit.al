@@ -40,6 +40,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         GuidedExperience: Codeunit "Guided Experience";
         GuidedExperienceType: Enum "Guided Experience Type";
         VideoCategory: Enum "Video Category";
+        AssistedSetupGroup: Enum "Assisted Setup Group";
         Checklist: Codeunit Checklist;
         TempAllProfile: Record "All Profile";
     begin
@@ -66,7 +67,16 @@ codeunit 70074170 MS_CreateWelcomeExperience
         GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::"Vendor List", SpotlightTourType::"Open in Excel", SpotlightTourTexts);
         GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
         GuidedExperience.InsertVideo(InterestTitleTxt, InterestShortTitleTxt, InterestDescriptionTxt, 1, 'https://www.youtube.com/embed/YpWD4ZrLobI', VideoCategory::GettingStarted);
-
+        GuidedExperience.InsertAssistedSetup('1: Let us define the shoe sizes', '1: Define shoe sizes', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MS_ShoeMgtShoeSizeGuide, AssistedSetupGroup::ShoeManagement, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertAssistedSetup('2: Decide how Shoe Management works', '2: Shoe Management processes', 'Here we help you set up how Shoe Management should work for you in your business.', 1, ObjectType::Page, Page::MS_ShoeManagementSetupGuide, AssistedSetupGroup::ShoeManagement, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertApplicationFeature(
+            'Shoe Management setup is easy!',
+            'Shoe Management Setup',
+            'We have collected all the steps you need to set up Shoe Management into a nice checklist. We will guide you every step of the way!',
+            1,
+            ObjectType::Codeunit,
+            Codeunit::MS_CustomShoeMgmtSetupList
+            );
         //Now, we read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
 
         /* --- DO STUFF BASED ON THE CUSTOMER PROFILE ---  
@@ -101,6 +111,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContext.SetRange(SignupContext.KeyName, 'interest');
         SignupContext.SetRange(SignupContext.Value, 'Trade');
         if SignupContext.FindSet() then begin
+            Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_CustomShoeMgmtSetupList, 2000, TempAllProfile, false);
             Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 3000, TempAllProfile, false);
         end;
 
@@ -129,9 +140,9 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         TitleTxt := 'Welcome ' + User."Full Name" + '!';
         TitleCollapsedTxt := 'Continue your experience';
-        HeaderTxt := 'The last business solution you''ll ever need';
+        HeaderTxt := 'So, you are into shoes? So are we!';
         HeaderCollapsedTxt := 'Continue exploring the trial';
-        DescriptionTxt := 'You just started a trial for Business Central that is based on your company profile. We hope you''ll love it!';
+        DescriptionTxt := 'You just started a trial for Business Central with Shoe Management. We hope you''ll love it!';
     end;
 
 
@@ -171,5 +182,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
             TempAllProfile.Insert();
         end;
     end;
+
+
 
 }
