@@ -1,7 +1,7 @@
-page 70074178 "MS_Shoe Manager Role Center"
+page 70074178 MS_BioDiversityMgmtRoleCenter
 {
     PageType = RoleCenter;
-    Caption = 'Shoe Management Trial and Setup';
+    Caption = 'Bio Diversity Management Setup';
 
     layout
     {

@@ -1,7 +1,7 @@
 enumextension 70074173 MS_AssistedSetupGroup extends "Assisted Setup Group"
 {
-    value(70074173; ShoeManagement)
+    value(70074173; MS_BioDiversity)
     {
-        Caption = 'Shoe Management';
+        Caption = 'Bio Diversity';
     }
 }

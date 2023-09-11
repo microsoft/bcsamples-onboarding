@@ -1,8 +1,8 @@
-page 70074176 MS_ShoeMgtShoeSizeGuide
+page 70074177 MS_BioDiversityMgmtSetupGuide
 {
-    Caption = 'Define shoe sizes';
+    Caption = 'Bio Diversity Management Setup';
     PageType = NavigatePage;
-    SourceTable = MS_ShoeManagementSetup;
+    SourceTable = MS_BioDiversityMgmtSetup;
     SourceTableTemporary = true;
 
     layout
@@ -179,15 +179,15 @@ page 70074176 MS_ShoeMgtShoeSizeGuide
 
     local procedure StoreRecordVar();
     var
-        ShoeManagementSetup: Record MS_ShoeManagementSetup;
+        MS_BioDiversityMgmtSetup: Record MS_BioDiversityMgmtSetup;
     begin
-        if not ShoeManagementSetup.Get() then begin
-            ShoeManagementSetup.Init();
-            ShoeManagementSetup.Insert();
+        if not MS_BioDiversityMgmtSetup.Get() then begin
+            MS_BioDiversityMgmtSetup.Init();
+            MS_BioDiversityMgmtSetup.Insert();
         end;
 
-        ShoeManagementSetup.TransferFields(Rec, false);
-        ShoeManagementSetup.Modify(true);
+        MS_BioDiversityMgmtSetup.TransferFields(Rec, false);
+        MS_BioDiversityMgmtSetup.Modify(true);
     end;
 
     local procedure FinishAction();

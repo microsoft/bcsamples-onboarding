@@ -35,18 +35,14 @@ codeunit 70074170 MS_CreateWelcomeExperience
     var
         SignupContextValues: Record "Signup Context Values";
         SignupContext: Record "Signup Context";
-        SpotlightTourType: Enum "Spotlight Tour Type";
-        SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text];
-        GuidedExperience: Codeunit "Guided Experience";
-        GuidedExperienceType: Enum "Guided Experience Type";
-        VideoCategory: Enum "Video Category";
-        AssistedSetupGroup: Enum "Assisted Setup Group";
+        AllProfile: Record "All Profile";
         Checklist: Codeunit Checklist;
-        TempAllProfile: Record "All Profile";
+        SpotlightTourType: Enum "Spotlight Tour Type";
+        GuidedExperienceType: Enum "Guided Experience Type";
     begin
         //First, we check if BC was provisioned via a URL that contained a sign-up context name (= the name is stored in the Signup Context table)
         if not SignupContext.Get('name') then
-            exit;
+            FakeTestsWhenNotInSignup();
 
         if not (LowerCase(SignupContext.Value) = OnboardingSampleValueTxt) then
             exit;
@@ -55,28 +51,13 @@ codeunit 70074170 MS_CreateWelcomeExperience
         if not SignupContextValues.IsEmpty() then
             exit;
 
+        AddGuidedExperienceItems();
+
         //Now, we set our desired context. The context should identify your app. One app, one context.
         //Note, that you can react to other key value pairs if you want to do things depending on profiler answers.
-        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::BCSampleOnboardingApp;
+        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::MS_BCSampleOnboardingApp;
         SignupContextValues.Insert();
 
-        //Add our Guided Experience Items we want to potentially add to the checklist
-        //Add the guided experience items. Note, that here we just load three different videos for the "system", "users" and "interest" questions from the profiler
-        //Add the checklist items you think makes sense to greet the user with, based on their profile.
-        GetVendorListSpotlightTourDictionary(SpotlightTourTexts);
-        GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::"Vendor List", SpotlightTourType::"Open in Excel", SpotlightTourTexts);
-        GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
-        GuidedExperience.InsertVideo(InterestTitleTxt, InterestShortTitleTxt, InterestDescriptionTxt, 1, 'https://www.youtube.com/embed/YpWD4ZrLobI', VideoCategory::GettingStarted);
-        GuidedExperience.InsertAssistedSetup('1: Let us define the shoe sizes', '1: Define shoe sizes', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MS_ShoeMgtShoeSizeGuide, AssistedSetupGroup::ShoeManagement, '', VideoCategory::GettingStarted, '');
-        GuidedExperience.InsertAssistedSetup('2: Decide how Shoe Management works', '2: Shoe Management processes', 'Here we help you set up how Shoe Management should work for you in your business.', 1, ObjectType::Page, Page::MS_ShoeManagementSetupGuide, AssistedSetupGroup::ShoeManagement, '', VideoCategory::GettingStarted, '');
-        GuidedExperience.InsertApplicationFeature(
-            'Shoe Management setup is easy!',
-            'Shoe Management Setup',
-            'We have collected all the steps you need to set up Shoe Management into a nice checklist. We will guide you every step of the way!',
-            1,
-            ObjectType::Codeunit,
-            Codeunit::MS_CustomShoeMgmtSetupList
-            );
         //Now, we read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
 
         /* --- DO STUFF BASED ON THE CUSTOMER PROFILE ---  
@@ -95,33 +76,31 @@ codeunit 70074170 MS_CreateWelcomeExperience
         This means you can read them and determine what the customer answered and use those answers to pivot the experience.
 
         Let's give the user what they expect, no? :o)
-
         */
 
         //If the user said they use Excel today, create the checklist item from the Guided Experience Item we added above that shows why BC is great with Excel
         SignupContext.Reset();
         SignupContext.SetRange(SignupContext.KeyName, 'currentsystem'); //this key can be anything but has to match the output of your profiling, what you added to the URL based on the answers provided by the user
         SignupContext.SetRange(SignupContext.Value, 'Excel'); //This is an example of the profiler answer
-        if SignupContext.FindSet() then begin
-            Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 1000, TempAllProfile, false);
-        end;
+        if SignupContext.FindSet() then
+            Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 1000, AllProfile, false);
+
 
         //If they have told us they're looking for "Trade", let's show them something meaningful
         SignupContext.Reset();
         SignupContext.SetRange(SignupContext.KeyName, 'interest');
         SignupContext.SetRange(SignupContext.Value, 'Trade');
         if SignupContext.FindSet() then begin
-            Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_CustomShoeMgmtSetupList, 2000, TempAllProfile, false);
-            Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 3000, TempAllProfile, false);
+            Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 2000, AllProfile, false);
+            Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 3000, AllProfile, false);
         end;
 
         //Let's speak their language with a great video, if they say they're 10-25 users in the company
         SignupContext.Reset();
         SignupContext.SetRange(SignupContext.KeyName, 'users');
         SignupContext.SetRange(SignupContext.Value, '10-25');
-        if SignupContext.FindSet() then begin
-            Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 1000, TempAllProfile, false);
-        end;
+        if SignupContext.IsEmpty() then
+            Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 1000, AllProfile, false);
 
     end;
 
@@ -140,49 +119,106 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         TitleTxt := 'Welcome ' + User."Full Name" + '!';
         TitleCollapsedTxt := 'Continue your experience';
-        HeaderTxt := 'So, you are into shoes? So are we! 👟';
-        HeaderCollapsedTxt := 'Continue exploring the trial';
-        DescriptionTxt := 'You just started a trial for Business Central with Shoe Management. We hope you''ll love it!';
+        HeaderTxt := 'Want to help save the World? So do we! 🌍';
+        HeaderCollapsedTxt := 'Continue setting up your system';
+        DescriptionTxt := 'You started a trial for Business Central with Bio Diversity Management. We hope you''ll love it!';
     end;
 
 
     //Here we create the dictionary of texts used for the Spotlight tour where we call out the Excel integration (which we use on the Vendor List)
     local procedure GetVendorListSpotlightTourDictionary(var SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])
     var
-        AnalyseGLEntriesInExcelStep1Title: Label 'Easily analyse list data in Excel';
-        AnalyseGLEntriesInExcelStep1Descr: Label 'You can export any list to Excel - even Excel online. You can also edit data in Excel';
-        AnalyseGLEntriesInExcelStep2Title: Label 'Here you''ll find actions to open lists and cards in other applications';
-        AnalyseGLEntriesInExcelStep2Descr: Label 'Try opening this Vendor list in Excel and import it back into Business Central';
+        AnalyseGLEntriesInExcelStep1TitleTxt: Label 'Easily analyse list data in Excel';
+        AnalyseGLEntriesInExcelStep1DescrTxt: Label 'You can export any list to Excel - even Excel online. You can also edit data in Excel';
+        AnalyseGLEntriesInExcelStep2TitleTxt: Label 'Here you''ll find actions to open lists and cards in other applications';
+        AnalyseGLEntriesInExcelStep2DescrTxt: Label 'Try opening this Vendor list in Excel and import it back into Business Central';
         SpotlightTourText: Enum "Spotlight Tour Text";
     begin
-        SpotlightTourTexts.Add(SpotlightTourText::Step1Title, AnalyseGLEntriesInExcelStep1Title);
-        SpotlightTourTexts.Add(SpotlightTourText::Step1Text, AnalyseGLEntriesInExcelStep1Descr);
-        SpotlightTourTexts.Add(SpotlightTourText::Step2Title, AnalyseGLEntriesInExcelStep2Title);
-        SpotlightTourTexts.Add(SpotlightTourText::Step2Text, AnalyseGLEntriesInExcelStep2Descr);
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Title, AnalyseGLEntriesInExcelStep1TitleTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Text, AnalyseGLEntriesInExcelStep1DescrTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Title, AnalyseGLEntriesInExcelStep2TitleTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Text, AnalyseGLEntriesInExcelStep2DescrTxt);
     end;
 
-    //These procedures are needed to get the roles for the Business Manager Role Center, which we need in order to insert items into the checklist
-    local procedure GetRolesForNonEvaluationCompany(var TempAllProfile: Record "All Profile" temporary)
-    begin
-        AddRoleToList(TempAllProfile, Page::"Business Manager Role Center");
-    end;
-
-    local procedure AddRoleToList(var TempAllProfile: Record "All Profile" temporary; RoleCenterID: Integer)
+    /*
+        local procedure AddRoleToList(var AllProfile: Record "All Profile"; var TempAllProfile: Record "All Profile" temporary)
+        begin
+            if AllProfile.FindFirst() then begin
+                TempAllProfile.TransferFields(AllProfile);
+                TempAllProfile.Insert();
+            end;
+        end;
+    */
+    internal procedure FakeTestsWhenNotInSignup()
     var
+        //Define variables we need to insert Checklists
         AllProfile: Record "All Profile";
+        Checklist: Codeunit Checklist;
+        SpotlightTourType: Enum "Spotlight Tour Type";
+        GuidedExperienceType: Enum "Guided Experience Type";
     begin
-        AllProfile.SetRange("Role Center ID", RoleCenterID);
-        AddRoleToList(AllProfile, TempAllProfile);
+        AddGuidedExperienceItems();
+        Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 1000, AllProfile, false);
+        Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 2000, AllProfile, false);
+        Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 3000, AllProfile, false);
+        Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 4000, AllProfile, false);
     end;
 
-    local procedure AddRoleToList(var AllProfile: Record "All Profile"; var TempAllProfile: Record "All Profile" temporary)
+    internal procedure AddGuidedExperienceItems()
+    var
+        //Define variables we need to insert Guided Experience Items
+        GuidedExperience: Codeunit "Guided Experience";
+        VideoCategory: Enum "Video Category";
+        AssistedSetupGroup: Enum "Assisted Setup Group";
+        SpotlightTourType: Enum "Spotlight Tour Type";
+        SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text];
     begin
-        if AllProfile.FindFirst() then begin
-            TempAllProfile.TransferFields(AllProfile);
-            TempAllProfile.Insert();
+        //Add our Guided Experience Items we want to potentially add to the checklist
+        //Add the guided experience items. Note, that here we just load three different videos for the "system", "users" and "interest" questions from the profiler
+        //Add the checklist items you think makes sense to greet the user with, based on their profile.
+        GetVendorListSpotlightTourDictionary(SpotlightTourTexts);
+        GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::"Vendor List", SpotlightTourType::"Open in Excel", SpotlightTourTexts);
+        GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
+        GuidedExperience.InsertVideo(InterestTitleTxt, InterestShortTitleTxt, InterestDescriptionTxt, 1, 'https://www.youtube.com/embed/YpWD4ZrLobI', VideoCategory::GettingStarted);
+        GuidedExperience.InsertAssistedSetup('1: Let us define the list of insects you want to work with', '1: Get the list of insects', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertAssistedSetup('2: Let us define the list of plants you want to work with', '2: Get the list of plants', 'Here we help you set up how Shoe Management should work for you in your business.', 1, ObjectType::Page, Page::MS_BioDiversityMgmtPlantGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertApplicationFeature(
+            'Setting up Bio Diversity Mgmt. is easy!',
+            'Bio Diversity Mgmt. Setup',
+            'We have collected all the steps you need to set up Bio Diversity Management into a nice checklist. We will guide you every step of the way!',
+            1,
+            ObjectType::Codeunit,
+            Codeunit::MS_BioDiversityMgmtSetupList
+            );
+
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"User Triggers", 'OnAfterUserInitialization', '', false, false)]
+    local procedure OnAfterUserInitialization()
+    begin
+        SetCurrentUserRole();
+    end;
+
+    internal procedure GetThisAppID(): guid
+    begin
+        exit('{15136d9c-faf8-4455-a0d4-04e075da9b6f}');
+    end;
+
+    internal procedure SetCurrentUserRole()
+    var
+        UserPersonalization: Record "User Personalization";
+    begin
+        if not UserPersonalization.Get(UserSecurityId()) then begin
+            UserPersonalization."User SID" := UserSecurityId();
+            UserPersonalization."App ID" := GetThisAppID();
+            UserPersonalization.Scope := UserPersonalization.Scope::Tenant;
+            UserPersonalization.Role := 'Bio Diversity Manager';
+            UserPersonalization."Profile ID" := 'MSBIODIVMGMTPROFILE';
+            UserPersonalization.Insert();
+        end else begin
+            UserPersonalization.Role := 'Bio Diversity Manager';
+            UserPersonalization."Profile ID" := 'MSBIODIVGMTPROFILE';
+            UserPersonalization.Modify();
         end;
     end;
-
-
-
 }
