@@ -1,8 +1,8 @@
-page 70074176 MSShoeMgmtShoeSizesGuide
+page 70074170 MSBioDiversityMgmtInsectGuide
 {
-    Caption = 'Define shoe sizes';
+    Caption = 'Define the list of plants';
     PageType = NavigatePage;
-    SourceTable = MS_ShoeManagementSetup;
+    SourceTable = MS_BioDiversityMgmtPlant;
     SourceTableTemporary = true;
 
     layout
@@ -137,13 +137,7 @@ page 70074176 MSShoeMgmtShoeSizesGuide
 
     trigger OnOpenPage();
     var
-        CompanyInformation: Record "Company Information";
     begin
-        Rec.Init();
-        if CompanyInformation.Get() then
-            Rec.TransferFields(CompanyInformation);
-
-        Rec.Insert();
 
         Step := Step::Start;
         EnableControls();
@@ -179,15 +173,9 @@ page 70074176 MSShoeMgmtShoeSizesGuide
 
     local procedure StoreRecordVar();
     var
-        ShoeManagementSetup: Record MS_ShoeManagementSetup;
+    //PlantsRec: Record MS_BioDiversityMgmtPlant;
     begin
-        if not ShoeManagementSetup.Get() then begin
-            ShoeManagementSetup.Init();
-            ShoeManagementSetup.Insert();
-        end;
 
-        ShoeManagementSetup.TransferFields(Rec, false);
-        ShoeManagementSetup.Modify(true);
     end;
 
     local procedure FinishAction();

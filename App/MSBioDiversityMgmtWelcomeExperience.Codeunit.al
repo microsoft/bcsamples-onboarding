@@ -1,4 +1,4 @@
-codeunit 70074170 MSCreateWelcomeExperience
+codeunit 70074170 MS_CreateWelcomeExperience
 {
     var
         //Define the texts for the Guided Experience Items the users will see in their checklists
@@ -55,7 +55,7 @@ codeunit 70074170 MSCreateWelcomeExperience
 
         //Now, we set our desired context. The context should identify your app. One app, one context.
         //Note, that you can react to other key value pairs if you want to do things depending on profiler answers.
-        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::BCSampleOnboardingApp;
+        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::MS_BCSampleOnboardingApp;
         SignupContextValues.Insert();
 
         //Now, we read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
@@ -91,7 +91,7 @@ codeunit 70074170 MSCreateWelcomeExperience
         SignupContext.SetRange(SignupContext.KeyName, 'interest');
         SignupContext.SetRange(SignupContext.Value, 'Trade');
         if SignupContext.FindSet() then begin
-            Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_CustomShoeMgmtSetupList, 2000, AllProfile, false);
+            Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 2000, AllProfile, false);
             Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 3000, AllProfile, false);
         end;
 
@@ -119,9 +119,9 @@ codeunit 70074170 MSCreateWelcomeExperience
 
         TitleTxt := 'Welcome ' + User."Full Name" + '!';
         TitleCollapsedTxt := 'Continue your experience';
-        HeaderTxt := 'You are into shoes? So are we! 👟';
-        HeaderCollapsedTxt := 'Continue exploring the trial';
-        DescriptionTxt := 'You just started a trial for Business Central with Shoe Management. We hope you''ll love it!';
+        HeaderTxt := 'Want to help save the World? So de we! 🌍';
+        HeaderCollapsedTxt := 'Continue setting up your system';
+        DescriptionTxt := 'You just started a trial for Business Central with Bio Diversity Management. We hope you''ll love it!';
     end;
 
 
@@ -158,11 +158,10 @@ codeunit 70074170 MSCreateWelcomeExperience
         GuidedExperienceType: Enum "Guided Experience Type";
     begin
         AddGuidedExperienceItems();
-        Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_CustomShoeMgmtSetupList, 1000, AllProfile, false);
+        Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 1000, AllProfile, false);
         Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 2000, AllProfile, false);
         Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 3000, AllProfile, false);
         Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 4000, AllProfile, false);
-        Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_CustomShoeMgmtSetupList, 5000, AllProfile, false);
     end;
 
     internal procedure AddGuidedExperienceItems()
@@ -181,15 +180,15 @@ codeunit 70074170 MSCreateWelcomeExperience
         GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::"Vendor List", SpotlightTourType::"Open in Excel", SpotlightTourTexts);
         GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
         GuidedExperience.InsertVideo(InterestTitleTxt, InterestShortTitleTxt, InterestDescriptionTxt, 1, 'https://www.youtube.com/embed/YpWD4ZrLobI', VideoCategory::GettingStarted);
-        GuidedExperience.InsertAssistedSetup('1: Let us define the shoe sizes', '1: Define shoe sizes', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MSShoeMgmtShoeSizesGuide, AssistedSetupGroup::MSShoeManagement, '', VideoCategory::GettingStarted, '');
-        GuidedExperience.InsertAssistedSetup('2: Decide how Shoe Management works', '2: Shoe Management processes', 'Here we help you set up how Shoe Management should work for you in your business.', 1, ObjectType::Page, Page::MS_ShoeManagementSetupGuide, AssistedSetupGroup::MSShoeManagement, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertAssistedSetup('1: Let us define the list of insects you want to work with', '1: Get the list of insects', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MSBioDiversityMgmtInsectGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertAssistedSetup('2: Let us define the list of plants you want to work with', '2: Get the list of plants', 'Here we help you set up how Shoe Management should work for you in your business.', 1, ObjectType::Page, Page::MSBioDiversityMgmtPlantGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
         GuidedExperience.InsertApplicationFeature(
-            'Shoe Management setup is easy!',
-            'Shoe Management Setup',
-            'We have collected all the steps you need to set up Shoe Management into a nice checklist. We will guide you every step of the way!',
+            'Setting up Bio Diversity Mgmt. is easy!',
+            'Bio Diversity Mgmt. Setup',
+            'We have collected all the steps you need to set up Bio Diversity Management into a nice checklist. We will guide you every step of the way!',
             1,
             ObjectType::Codeunit,
-            Codeunit::MS_CustomShoeMgmtSetupList
+            Codeunit::MS_BioDiversityMgmtSetupList
             );
 
     end;
@@ -213,12 +212,12 @@ codeunit 70074170 MSCreateWelcomeExperience
             UserPersonalization."User SID" := UserSecurityId();
             UserPersonalization."App ID" := GetThisAppID();
             UserPersonalization.Scope := UserPersonalization.Scope::Tenant;
-            UserPersonalization.Role := 'Shoe Manager';
-            UserPersonalization."Profile ID" := 'MSSHOEMGMTPROFILE';
+            UserPersonalization.Role := 'Bio Diversity Manager';
+            UserPersonalization."Profile ID" := 'MSBIODIVMGMTPROFILE';
             UserPersonalization.Insert();
         end else begin
-            UserPersonalization.Role := 'Shoe Manager';
-            UserPersonalization."Profile ID" := 'MSSHOEMGMTPROFILE';
+            UserPersonalization.Role := 'Bio Diversity Manager';
+            UserPersonalization."Profile ID" := 'MSBIODIVGMTPROFILE';
             UserPersonalization.Modify();
         end;
     end;

@@ -1,6 +1,6 @@
-table 70074175 MS_ShoeManagementSetup
+table 70074170 MS_BioDiversityMgmtPlant
 {
-    Caption = 'Shoe Management Setup';
+    Caption = 'Bio Diversity Plant';
     DataPerCompany = true;
 
     fields
