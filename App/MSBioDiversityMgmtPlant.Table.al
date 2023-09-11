@@ -5,20 +5,35 @@ table 70074170 MS_BioDiversityMgmtPlant
 
     fields
     {
-        field(1; PrimaryKey; Code[20])
+        field(1; PlantCode; Code[30])
         {
-            Description = 'Primary key of the table';
+            Description = 'This code specifies a uniqie identifier of the plant';
             DataClassification = SystemMetadata;
         }
-        field(2; Enabled; Boolean)
+        field(2; "Name"; text[100])
         {
-            Description = 'Specifies if the Shoe Management solution is enabled';
+            Description = 'Specifies if name of the plant';
+            DataClassification = SystemMetadata;
+        }
+        field(3; "Description"; text[1000])
+        {
+            Description = 'Specifies if description of the plant';
+            DataClassification = SystemMetadata;
+        }
+        field(4; IsPollinator; Boolean)
+        {
+            Description = 'Specifies if this plant acts as a pollinator for other plants';
+            DataClassification = SystemMetadata;
+        }
+        field(5; PollinatedBy; Enum MS_BioDiversityMgmtPollinator)
+        {
+            Description = 'Specifies how the plant is pollinated';
             DataClassification = SystemMetadata;
         }
     }
     keys
     {
-        key(PrimaryKey; PrimaryKey)
+        key(PrimaryKey; PlantCode)
         {
             Clustered = TRUE;
         }

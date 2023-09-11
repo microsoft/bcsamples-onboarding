@@ -1,8 +1,8 @@
 page 70074170 MS_BioDiversityMgmtInsectGuide
 {
-    Caption = 'Define the list of plants';
+    Caption = 'Define the list of insects';
     PageType = NavigatePage;
-    SourceTable = MS_BioDiversityMgmtPlant;
+    SourceTable = MS_BioDiversityMgmtInsect;
     SourceTableTemporary = true;
 
     layout

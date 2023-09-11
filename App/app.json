@@ -1,8 +1,8 @@
 {
-  "id": "15136d9c-faf8-4455-a0d4-04e075da9b6f", 
+  "id": "cf6719a0-2f10-48dd-93b2-a1f4b0647cbf", 
   "name": "Onboarding Sample App",
   "publisher": "Søren Alexandersen",
-  "version": "1.0.7.0",
+  "version": "1.0.0.0",
   "brief": "Sample app that showcase how to create a great welcome experience for Business Central customers",
   "description": "This app show examples of using several elements of the onboarding framework for Business Central.",
   "privacyStatement": "https://go.microsoft.com/fwlink/?LinkId=834881",

@@ -55,7 +55,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         //Now, we set our desired context. The context should identify your app. One app, one context.
         //Note, that you can react to other key value pairs if you want to do things depending on profiler answers.
-        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::MS_BCSampleOnboardingApp;
+        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::MS_BioDiversityMgmt;
         SignupContextValues.Insert();
 
         //Now, we read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
@@ -86,10 +86,10 @@ codeunit 70074170 MS_CreateWelcomeExperience
             Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 1000, AllProfile, false);
 
 
-        //If they have told us they're looking for "Trade", let's show them something meaningful
+        //If they have told us they're looking for "Bio Diversity", let's show them something meaningful
         SignupContext.Reset();
         SignupContext.SetRange(SignupContext.KeyName, 'interest');
-        SignupContext.SetRange(SignupContext.Value, 'Trade');
+        SignupContext.SetRange(SignupContext.Value, 'Bio Diversity');
         if SignupContext.FindSet() then begin
             Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 2000, AllProfile, false);
             Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 3000, AllProfile, false);
@@ -128,16 +128,16 @@ codeunit 70074170 MS_CreateWelcomeExperience
     //Here we create the dictionary of texts used for the Spotlight tour where we call out the Excel integration (which we use on the Vendor List)
     local procedure GetVendorListSpotlightTourDictionary(var SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])
     var
-        AnalyseGLEntriesInExcelStep1TitleTxt: Label 'Easily analyse list data in Excel';
-        AnalyseGLEntriesInExcelStep1DescrTxt: Label 'You can export any list to Excel - even Excel online. You can also edit data in Excel';
-        AnalyseGLEntriesInExcelStep2TitleTxt: Label 'Here you''ll find actions to open lists and cards in other applications';
-        AnalyseGLEntriesInExcelStep2DescrTxt: Label 'Try opening this Vendor list in Excel and import it back into Business Central';
+        EditPlantsInExcelStep1TitleTxt: Label 'Easily analyse any list data in Excel. For example this list of plants.';
+        EditPlantsInExcelStep1DescrTxt: Label 'You can export any list to Excel - even Excel online. You can also edit data in Excel';
+        EditPlantsInExcelStep2TitleTxt: Label 'Here you''ll find actions to open lists and cards in other applications';
+        EditPlantsInExcelStep2DescrTxt: Label 'Try editing this list of plants in Excel and import it back into Business Central';
         SpotlightTourText: Enum "Spotlight Tour Text";
     begin
-        SpotlightTourTexts.Add(SpotlightTourText::Step1Title, AnalyseGLEntriesInExcelStep1TitleTxt);
-        SpotlightTourTexts.Add(SpotlightTourText::Step1Text, AnalyseGLEntriesInExcelStep1DescrTxt);
-        SpotlightTourTexts.Add(SpotlightTourText::Step2Title, AnalyseGLEntriesInExcelStep2TitleTxt);
-        SpotlightTourTexts.Add(SpotlightTourText::Step2Text, AnalyseGLEntriesInExcelStep2DescrTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Title, EditPlantsInExcelStep1TitleTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Text, EditPlantsInExcelStep1DescrTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Title, EditPlantsInExcelStep2TitleTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Text, EditPlantsInExcelStep2DescrTxt);
     end;
 
     /*
@@ -160,7 +160,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         AddGuidedExperienceItems();
         Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 1000, AllProfile, false);
         Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 2000, AllProfile, false);
-        Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 3000, AllProfile, false);
+        Checklist.Insert(Page::MS_BioDiversityMgmtPlants, SpotlightTourType::"Open in Excel", 3000, AllProfile, false);
         Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 4000, AllProfile, false);
     end;
 
@@ -171,13 +171,20 @@ codeunit 70074170 MS_CreateWelcomeExperience
         VideoCategory: Enum "Video Category";
         AssistedSetupGroup: Enum "Assisted Setup Group";
         SpotlightTourType: Enum "Spotlight Tour Type";
+        GuidedExperienceType: Enum "Guided Experience Type";
         SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text];
     begin
         //Add our Guided Experience Items we want to potentially add to the checklist
         //Add the guided experience items. Note, that here we just load three different videos for the "system", "users" and "interest" questions from the profiler
         //Add the checklist items you think makes sense to greet the user with, based on their profile.
+
+        //Clean up before we add
+        GuidedExperience.Remove(GuidedExperienceType::"Assisted Setup", ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide);
+        GuidedExperience.Remove(GuidedExperienceType::"Assisted Setup", ObjectType::Page, Page::MS_BioDiversityMgmtPlantGuide);
+
+
         GetVendorListSpotlightTourDictionary(SpotlightTourTexts);
-        GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::"Vendor List", SpotlightTourType::"Open in Excel", SpotlightTourTexts);
+        GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::MS_BioDiversityMgmtPlants, SpotlightTourType::"Open in Excel", SpotlightTourTexts);
         GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
         GuidedExperience.InsertVideo(InterestTitleTxt, InterestShortTitleTxt, InterestDescriptionTxt, 1, 'https://www.youtube.com/embed/YpWD4ZrLobI', VideoCategory::GettingStarted);
         GuidedExperience.InsertAssistedSetup('1: Let us define the list of insects you want to work with', '1: Get the list of insects', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
