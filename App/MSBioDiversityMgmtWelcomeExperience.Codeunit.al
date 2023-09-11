@@ -55,7 +55,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         //Now, we set our desired context. The context should identify your app. One app, one context.
         //Note, that you can react to other key value pairs if you want to do things depending on profiler answers.
-        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::MS_BCSampleOnboardingApp;
+        SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::MS_BioDiversityMgmt;
         SignupContextValues.Insert();
 
         //Now, we read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
@@ -86,10 +86,10 @@ codeunit 70074170 MS_CreateWelcomeExperience
             Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 1000, AllProfile, false);
 
 
-        //If they have told us they're looking for "Trade", let's show them something meaningful
+        //If they have told us they're looking for "Bio Diversity", let's show them something meaningful
         SignupContext.Reset();
         SignupContext.SetRange(SignupContext.KeyName, 'interest');
-        SignupContext.SetRange(SignupContext.Value, 'Trade');
+        SignupContext.SetRange(SignupContext.Value, 'Bio Diversity');
         if SignupContext.FindSet() then begin
             Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 2000, AllProfile, false);
             Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 3000, AllProfile, false);
@@ -171,11 +171,18 @@ codeunit 70074170 MS_CreateWelcomeExperience
         VideoCategory: Enum "Video Category";
         AssistedSetupGroup: Enum "Assisted Setup Group";
         SpotlightTourType: Enum "Spotlight Tour Type";
+        GuidedExperienceType: Enum "Guided Experience Type";
         SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text];
     begin
         //Add our Guided Experience Items we want to potentially add to the checklist
         //Add the guided experience items. Note, that here we just load three different videos for the "system", "users" and "interest" questions from the profiler
         //Add the checklist items you think makes sense to greet the user with, based on their profile.
+
+        //Clean up before we add
+        GuidedExperience.Remove(GuidedExperienceType::"Assisted Setup", ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide);
+        GuidedExperience.Remove(GuidedExperienceType::"Assisted Setup", ObjectType::Page, Page::MS_BioDiversityMgmtPlantGuide);
+
+
         GetVendorListSpotlightTourDictionary(SpotlightTourTexts);
         GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::"Vendor List", SpotlightTourType::"Open in Excel", SpotlightTourTexts);
         GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
