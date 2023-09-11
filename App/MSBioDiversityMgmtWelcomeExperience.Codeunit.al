@@ -128,16 +128,16 @@ codeunit 70074170 MS_CreateWelcomeExperience
     //Here we create the dictionary of texts used for the Spotlight tour where we call out the Excel integration (which we use on the Vendor List)
     local procedure GetVendorListSpotlightTourDictionary(var SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])
     var
-        AnalyseGLEntriesInExcelStep1TitleTxt: Label 'Easily analyse list data in Excel';
-        AnalyseGLEntriesInExcelStep1DescrTxt: Label 'You can export any list to Excel - even Excel online. You can also edit data in Excel';
-        AnalyseGLEntriesInExcelStep2TitleTxt: Label 'Here you''ll find actions to open lists and cards in other applications';
-        AnalyseGLEntriesInExcelStep2DescrTxt: Label 'Try opening this Vendor list in Excel and import it back into Business Central';
+        EditPlantsInExcelStep1TitleTxt: Label 'Easily analyse any list data in Excel. For example this list of plants.';
+        EditPlantsInExcelStep1DescrTxt: Label 'You can export any list to Excel - even Excel online. You can also edit data in Excel';
+        EditPlantsInExcelStep2TitleTxt: Label 'Here you''ll find actions to open lists and cards in other applications';
+        EditPlantsInExcelStep2DescrTxt: Label 'Try editing this list of plants in Excel and import it back into Business Central';
         SpotlightTourText: Enum "Spotlight Tour Text";
     begin
-        SpotlightTourTexts.Add(SpotlightTourText::Step1Title, AnalyseGLEntriesInExcelStep1TitleTxt);
-        SpotlightTourTexts.Add(SpotlightTourText::Step1Text, AnalyseGLEntriesInExcelStep1DescrTxt);
-        SpotlightTourTexts.Add(SpotlightTourText::Step2Title, AnalyseGLEntriesInExcelStep2TitleTxt);
-        SpotlightTourTexts.Add(SpotlightTourText::Step2Text, AnalyseGLEntriesInExcelStep2DescrTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Title, EditPlantsInExcelStep1TitleTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step1Text, EditPlantsInExcelStep1DescrTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Title, EditPlantsInExcelStep2TitleTxt);
+        SpotlightTourTexts.Add(SpotlightTourText::Step2Text, EditPlantsInExcelStep2DescrTxt);
     end;
 
     /*
@@ -160,7 +160,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         AddGuidedExperienceItems();
         Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 1000, AllProfile, false);
         Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 2000, AllProfile, false);
-        Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 3000, AllProfile, false);
+        Checklist.Insert(Page::MS_BioDiversityMgmtPlants, SpotlightTourType::"Open in Excel", 3000, AllProfile, false);
         Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 4000, AllProfile, false);
     end;
 
@@ -184,7 +184,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
 
         GetVendorListSpotlightTourDictionary(SpotlightTourTexts);
-        GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::"Vendor List", SpotlightTourType::"Open in Excel", SpotlightTourTexts);
+        GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::MS_BioDiversityMgmtPlants, SpotlightTourType::"Open in Excel", SpotlightTourTexts);
         GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
         GuidedExperience.InsertVideo(InterestTitleTxt, InterestShortTitleTxt, InterestDescriptionTxt, 1, 'https://www.youtube.com/embed/YpWD4ZrLobI', VideoCategory::GettingStarted);
         GuidedExperience.InsertAssistedSetup('1: Let us define the list of insects you want to work with', '1: Get the list of insects', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
