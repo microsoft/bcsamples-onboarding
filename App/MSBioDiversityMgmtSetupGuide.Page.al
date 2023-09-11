@@ -1,4 +1,4 @@
-page 70074177 MSBioDiversityMgmtSetupGuide
+page 70074177 MS_BioDiversityMgmtSetupGuide
 {
     Caption = 'Bio Diversity Management Setup';
     PageType = NavigatePage;

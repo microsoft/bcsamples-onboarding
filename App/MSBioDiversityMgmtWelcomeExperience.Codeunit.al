@@ -119,9 +119,9 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
         TitleTxt := 'Welcome ' + User."Full Name" + '!';
         TitleCollapsedTxt := 'Continue your experience';
-        HeaderTxt := 'Want to help save the World? So de we! 🌍';
+        HeaderTxt := 'Want to help save the World? So do we! 🌍';
         HeaderCollapsedTxt := 'Continue setting up your system';
-        DescriptionTxt := 'You just started a trial for Business Central with Bio Diversity Management. We hope you''ll love it!';
+        DescriptionTxt := 'You started a trial for Business Central with Bio Diversity Management. We hope you''ll love it!';
     end;
 
 
@@ -180,8 +180,8 @@ codeunit 70074170 MS_CreateWelcomeExperience
         GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::"Vendor List", SpotlightTourType::"Open in Excel", SpotlightTourTexts);
         GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
         GuidedExperience.InsertVideo(InterestTitleTxt, InterestShortTitleTxt, InterestDescriptionTxt, 1, 'https://www.youtube.com/embed/YpWD4ZrLobI', VideoCategory::GettingStarted);
-        GuidedExperience.InsertAssistedSetup('1: Let us define the list of insects you want to work with', '1: Get the list of insects', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MSBioDiversityMgmtInsectGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
-        GuidedExperience.InsertAssistedSetup('2: Let us define the list of plants you want to work with', '2: Get the list of plants', 'Here we help you set up how Shoe Management should work for you in your business.', 1, ObjectType::Page, Page::MSBioDiversityMgmtPlantGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertAssistedSetup('1: Let us define the list of insects you want to work with', '1: Get the list of insects', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertAssistedSetup('2: Let us define the list of plants you want to work with', '2: Get the list of plants', 'Here we help you set up how Shoe Management should work for you in your business.', 1, ObjectType::Page, Page::MS_BioDiversityMgmtPlantGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
         GuidedExperience.InsertApplicationFeature(
             'Setting up Bio Diversity Mgmt. is easy!',
             'Bio Diversity Mgmt. Setup',

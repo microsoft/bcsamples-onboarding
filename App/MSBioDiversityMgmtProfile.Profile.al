@@ -1,4 +1,4 @@
-profile MSBioDiversityMgmtProfile
+profile MS_BioDiversityMgmtProfile
 {
     Description = 'This profile is used for the Shoe Management user, which we expect is the one signing up to Business Central in this example.';
     Caption = 'Shoe Manager';

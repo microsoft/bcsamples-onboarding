@@ -1,4 +1,4 @@
-page 70074176 MSBioDiversityMgmtPlantGuide
+page 70074176 MS_BioDiversityMgmtPlantGuide
 {
     Caption = 'Define the list of plants';
     PageType = NavigatePage;
