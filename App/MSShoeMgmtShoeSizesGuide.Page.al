@@ -1,4 +1,4 @@
-page 70074176 MS_ShoeMgtShoeSizeGuide
+page 70074176 MSShoeMgmtShoeSizesGuide
 {
     Caption = 'Define shoe sizes';
     PageType = NavigatePage;

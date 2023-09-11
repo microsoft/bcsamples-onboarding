@@ -6,7 +6,7 @@ codeunit 70074176 MS_CustomShoeMgmtSetupList
         GuidedExperience: Codeunit "Guided Experience";
 
     begin
-        GuidedExperience.OpenAssistedSetup(Enum::"Assisted Setup Group"::ShoeManagement);
+        GuidedExperience.OpenAssistedSetup(Enum::"Assisted Setup Group"::MSShoeManagement);
     end;
 }
 
