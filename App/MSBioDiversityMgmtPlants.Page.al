@@ -10,7 +10,6 @@ page 70074171 MS_BioDiversityMgmtPlants
     {
         area(Content)
         {
-            // Sets the No., Name, Contact, and Phone No. fields in the Customer table to be displayed as columns in the list. 
             repeater(Group)
             {
                 field(PlantCode; 'Plant Code')
