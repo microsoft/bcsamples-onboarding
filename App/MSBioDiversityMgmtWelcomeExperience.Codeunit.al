@@ -208,7 +208,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
 
     internal procedure GetThisAppID(): guid
     begin
-        exit('{15136d9c-faf8-4455-a0d4-04e075da9b6f}');
+        exit('{cf6719a0-2f10-48dd-93b2-a1f4b0647cbf}');
     end;
 
     internal procedure SetCurrentUserRole()
