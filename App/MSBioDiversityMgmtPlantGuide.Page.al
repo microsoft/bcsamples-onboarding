@@ -16,7 +16,8 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                 Caption = '';
                 Editable = false;
                 Visible = TopBannerVisible and not FinishActionEnabled;
-                field(MediaResourcesStandard; MediaResourcesStandard."Media Reference")
+                //field(MediaResourcesStandard; MediaResourcesStandard."Media Reference")
+                field(Media; Media."Media Reference")
                 {
                     ApplicationArea = All;
                     Editable = false;
@@ -39,14 +40,16 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
             group(Step1)
             {
                 Visible = Step1Visible;
+
                 group("Welcome to PageName")
                 {
-                    Caption = 'Welcome to Shoe Management Setup';
+                    Caption = 'Welcome to Bio Diversity Managemeng Setup';
                     Visible = Step1Visible;
+
                     group(Group18)
                     {
                         Caption = '';
-                        InstructionalText = 'Step1 - Replace this text with some instructions.';
+                        InstructionalText = 'Step1 - Import the list of plants.';
                     }
                 }
                 group("Let's go!")
@@ -55,7 +58,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                     group(Group22)
                     {
                         Caption = '';
-                        InstructionalText = 'Step1 - Replace this text with some more instructions.';
+                        InstructionalText = 'When you click next we will import a list from Github of well known plants. You will get the chance to review the list before we store it in your system.';
                     }
                 }
             }
@@ -63,11 +66,15 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
             group(Step2)
             {
                 Caption = '';
-                InstructionalText = 'Step2 - Replace this text with some instructions.';
+                InstructionalText = 'Step2 - Verify the list of plants.';
                 Visible = Step2Visible;
                 Editable = false;
                 //You might want to add fields here
-
+                group(Group24)
+                {
+                    Caption = '';
+                    InstructionalText = 'Please verify that the list looks like you expect it. When you click next, we will store the list of plants your system. You can find it in the Plants page.';
+                }
                 repeater(TempPlants)
                 {
                     field("Plant Name"; Rec.Name)
@@ -88,7 +95,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                 group(Group23)
                 {
                     Caption = '';
-                    InstructionalText = 'Step3 - Replace this text with some instructions.';
+                    InstructionalText = 'Congratulations! We are done with importing plants.';
                 }
                 group("That's it!")
                 {
@@ -96,7 +103,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                     group(Group25)
                     {
                         Caption = '';
-                        InstructionalText = 'To save this setup, choose Finish.';
+                        InstructionalText = 'To close this setup, choose Finish.';
                     }
                 }
             }
@@ -162,6 +169,8 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
         MediaRepositoryStandard: Record "Media Repository";
         MediaResourcesDone: Record "Media Resources";
         MediaResourcesStandard: Record "Media Resources";
+        Media: Record "Media Resources";
+
         Step: Option Start,Step2,Finish;
         BackActionEnabled: Boolean;
         FinishActionEnabled: Boolean;
@@ -251,6 +260,24 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
         then
                 TopBannerVisible := MediaResourcesDone."Media Reference".HasValue();
     end;
+
+    local procedure LoadCustomBanner()
+    var
+        HttpClient: HttpClient;
+        ResponseMsg: HttpResponseMessage;
+        inStream: InStream;
+    begin
+        HttpClient.Get('https://raw.githubusercontent.com/microsoft/bcsamples-onboarding/Media/Resources/bannerwizard.png', ResponseMsg);
+        ResponseMsg.Content.ReadAs(inStream);
+
+        if not Media.Get('BIODIV-WIZ') then begin
+            Media.Init();
+            Media.Code := 'BIODIV-WIZ';
+            Media."Media Reference".ImportStream(inStream, 'Picture from URL');
+            Media.Insert();
+        end;
+    end;
+
 
     local procedure LoadPlantsFromGitHub() Plants: JsonToken
     var
