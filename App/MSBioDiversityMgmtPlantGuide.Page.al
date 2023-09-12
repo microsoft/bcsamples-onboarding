@@ -278,7 +278,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
             Plant.AsObject().Get('description', PlantDescription);
 
             Rec.Init();
-            Rec.PlantCode := Format(PlantName);
+            Rec.PlantCode := CopyStr(DelChr(Format(PlantName), '=', ' '), 1, 30);
             Rec.Name := CopyStr(PlantName.AsValue().AsText(), 1, 100);
             Rec.Description := CopyStr(PlantDescription.AsValue().AsText(), 1, 1000);
             Rec.Insert();
