@@ -4,6 +4,8 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
     PageType = NavigatePage;
     SourceTable = MS_BioDiversityMgmtPlant;
     SourceTableTemporary = true;
+    ApplicationArea = All;
+    Permissions = tabledata MS_BioDiversityMgmtPlant = ri;
 
     layout
     {
@@ -63,7 +65,20 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                 Caption = '';
                 InstructionalText = 'Step2 - Replace this text with some instructions.';
                 Visible = Step2Visible;
+                Editable = false;
                 //You might want to add fields here
+
+                repeater(TempPlants)
+                {
+                    field("Plant Name"; Rec.Name)
+                    {
+                        ToolTip = 'Name of the plant';
+                    }
+                    field("Plant Description"; Rec.Description)
+                    {
+                        ToolTip = 'Description of the plant';
+                    }
+                }
             }
 
 
@@ -138,7 +153,6 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
     trigger OnOpenPage();
     var
     begin
-
         Step := Step::Start;
         EnableControls();
     end;
@@ -171,16 +185,8 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
         end;
     end;
 
-    local procedure StoreRecordVar();
-    var
-    //PlantsRec: Record MS_BioDiversityMgmtPlant;
-    begin
-
-    end;
-
     local procedure FinishAction();
     begin
-        StoreRecordVar();
         CurrPage.Close();
     end;
 
@@ -203,12 +209,21 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
     end;
 
     local procedure ShowStep2();
+    var
+        Plants: JsonToken;
     begin
         Step2Visible := true;
+
+        if not Rec.IsEmpty() then
+            exit;
+
+        Plants := LoadPlantsFromGitHub();
+        LoadJsonResponseToTempTable(Plants);
     end;
 
     local procedure ShowStep3();
     begin
+        FlushRecordsIntoDB();
         Step3Visible := true;
 
         NextActionEnabled := false;
@@ -235,5 +250,52 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                 MediaResourcesDone.Get(MediaRepositoryDone."Media Resources Ref")
         then
                 TopBannerVisible := MediaResourcesDone."Media Reference".HasValue();
+    end;
+
+    local procedure LoadPlantsFromGitHub() Plants: JsonToken
+    var
+        HttpClient: HttpClient;
+        HttpResponseMessage: HttpResponseMessage;
+        JsonObject: JsonObject;
+        ResponseContent: Text;
+    begin
+        HttpClient.Get('https://raw.githubusercontent.com/microsoft/bcsamples-onboarding/main/App/plants.json', HttpResponseMessage);
+
+        if HttpResponseMessage.IsSuccessStatusCode() then begin
+            HttpResponseMessage.Content().ReadAs(ResponseContent);
+            JsonObject.ReadFrom(ResponseContent);
+            JsonObject.Get('plants', Plants);
+        end else
+            Error('Error: Something went wrong while loading the plants from GitHub.');
+    end;
+
+    local procedure LoadJsonResponseToTempTable(Plants: JsonToken)
+    var
+        Plant, PlantName, PlantDescription : JsonToken;
+    begin
+        foreach Plant in Plants.AsArray() do begin
+            Plant.AsObject().Get('name', PlantName);
+            Plant.AsObject().Get('description', PlantDescription);
+
+            Rec.Init();
+            Rec.PlantCode := Format(PlantName);
+            Rec.Name := CopyStr(PlantName.AsValue().AsText(), 1, 100);
+            Rec.Description := CopyStr(PlantDescription.AsValue().AsText(), 1, 1000);
+            Rec.Insert();
+        end;
+    end;
+
+    local procedure FlushRecordsIntoDB()
+    var
+        Plant: Record MS_BioDiversityMgmtPlant;
+    begin
+        if Rec.FindSet() then
+            repeat
+                Plant.Init();
+                Plant.PlantCode := Rec.PlantCode;
+                Plant.Name := Rec.Name;
+                Plant.Description := Rec.Description;
+                Plant.Insert();
+            until Rec.Next() = 0;
     end;
 }

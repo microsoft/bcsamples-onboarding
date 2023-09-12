@@ -2,6 +2,8 @@ table 70074175 MS_BioDiversityMgmtSetup
 {
     Caption = 'Bio Diversity Management Setup';
     DataPerCompany = true;
+    InherentEntitlements = RIMDX;
+    InherentPermissions = RIMDX;
 
     fields
     {
