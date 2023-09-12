@@ -220,11 +220,13 @@ codeunit 70074170 MS_CreateWelcomeExperience
             UserPersonalization."App ID" := GetThisAppID();
             UserPersonalization.Scope := UserPersonalization.Scope::Tenant;
             UserPersonalization.Role := 'Bio Diversity Manager';
-            UserPersonalization."Profile ID" := 'MSBIODIVMGMTPROFILE';
+            UserPersonalization."Profile ID" := 'MS_BIODIVERSITYMGMTPROFILE';
             UserPersonalization.Insert();
         end else begin
+            UserPersonalization.Scope := UserPersonalization.Scope::Tenant;
+            UserPersonalization."App ID" := GetThisAppID();
             UserPersonalization.Role := 'Bio Diversity Manager';
-            UserPersonalization."Profile ID" := 'MSBIODIVGMTPROFILE';
+            UserPersonalization."Profile ID" := 'MS_BIODIVERSITYMGMTPROFILE';
             UserPersonalization.Modify();
         end;
     end;
