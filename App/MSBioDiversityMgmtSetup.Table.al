@@ -14,7 +14,12 @@ table 70074175 MS_BioDiversityMgmtSetup
         }
         field(2; Enabled; Boolean)
         {
-            Description = 'Specifies if the Shoe Management solution is enabled';
+            Description = 'Specifies if the Bio Diversity solution is enabled';
+            DataClassification = SystemMetadata;
+        }
+        field(3; SetupWizardBanner; Blob)
+        {
+            Description = 'Specifies the banner to be used in assisted setups.';
             DataClassification = SystemMetadata;
         }
     }

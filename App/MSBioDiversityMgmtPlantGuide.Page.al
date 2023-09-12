@@ -11,13 +11,26 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
     {
         area(content)
         {
+            //group(StandardBanner)
             group(StandardBanner)
             {
                 Caption = '';
                 Editable = false;
                 Visible = TopBannerVisible and not FinishActionEnabled;
-                //field(MediaResourcesStandard; MediaResourcesStandard."Media Reference")
-                field(Media; Media."Media Reference")
+                field(MediaResourcesStandard; MediaResourcesStandard."Media Reference")
+                //field(BioDiversitySetup; BioDiversitySetup.SetupWizardBanner)
+                {
+                    ApplicationArea = All;
+                    Editable = false;
+                    ShowCaption = false;
+                }
+            }
+            group(CustomBanner)
+            {
+                Caption = '';
+                Editable = false;
+                Visible = CustomBannerVisible and not FinishActionEnabled;
+                field(BioDiversitySetup; BioDiversitySetup.SetupWizardBanner)
                 {
                     ApplicationArea = All;
                     Editable = false;
@@ -43,7 +56,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
 
                 group("Welcome to PageName")
                 {
-                    Caption = 'Welcome to Bio Diversity Managemeng Setup';
+                    Caption = 'Welcome to Bio Diversity Management Setup';
                     Visible = Step1Visible;
 
                     group(Group18)
@@ -87,7 +100,6 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                     }
                 }
             }
-
 
             group(Step3)
             {
@@ -154,6 +166,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
 
     trigger OnInit();
     begin
+        LoadCustomBanner();
         LoadTopBanners();
     end;
 
@@ -169,7 +182,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
         MediaRepositoryStandard: Record "Media Repository";
         MediaResourcesDone: Record "Media Resources";
         MediaResourcesStandard: Record "Media Resources";
-        Media: Record "Media Resources";
+        BioDiversitySetup: Record MS_BioDiversityMgmtSetup;
 
         Step: Option Start,Step2,Finish;
         BackActionEnabled: Boolean;
@@ -179,6 +192,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
         Step2Visible: Boolean;
         Step3Visible: Boolean;
         TopBannerVisible: Boolean;
+        CustomBannerVisible: Boolean;
 
     local procedure EnableControls();
     begin
@@ -261,23 +275,15 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                 TopBannerVisible := MediaResourcesDone."Media Reference".HasValue();
     end;
 
-    local procedure LoadCustomBanner()
+    local procedure LoadCustomBanner();
     var
-        HttpClient: HttpClient;
-        ResponseMsg: HttpResponseMessage;
-        inStream: InStream;
+        SetupKey: Code[20];
     begin
-        HttpClient.Get('https://raw.githubusercontent.com/microsoft/bcsamples-onboarding/Media/Resources/bannerwizard.png', ResponseMsg);
-        ResponseMsg.Content.ReadAs(inStream);
+        SetupKey := 'BIODIVSETUP';
+        if BioDiversitySetup.Get(SetupKey) then
+            CustomBannerVisible := BioDiversitySetup.SetupWizardBanner.HasValue();
 
-        if not Media.Get('BIODIV-WIZ') then begin
-            Media.Init();
-            Media.Code := 'BIODIV-WIZ';
-            Media."Media Reference".ImportStream(inStream, 'Picture from URL');
-            Media.Insert();
-        end;
     end;
-
 
     local procedure LoadPlantsFromGitHub() Plants: JsonToken
     var
