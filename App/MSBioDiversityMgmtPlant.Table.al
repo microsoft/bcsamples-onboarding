@@ -7,7 +7,7 @@ table 70074170 MS_BioDiversityMgmtPlant
     {
         field(1; PlantCode; Code[30])
         {
-            Description = 'This code specifies a uniqie identifier of the plant';
+            Description = 'This code specifies a unique identifier of the plant';
             DataClassification = SystemMetadata;
         }
         field(2; "Name"; text[100])
