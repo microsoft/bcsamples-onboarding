@@ -82,9 +82,10 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContext.Reset();
         SignupContext.SetRange(SignupContext.KeyName, 'currentsystem'); //this key can be anything but has to match the output of your profiling, what you added to the URL based on the answers provided by the user
         SignupContext.SetRange(SignupContext.Value, 'Excel'); //This is an example of the profiler answer
-        if SignupContext.FindSet() then
+        if SignupContext.FindSet() then begin
             Checklist.Insert(Page::"Vendor List", SpotlightTourType::"Open in Excel", 1000, AllProfile, false);
-
+            Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Report, Report::MS_BioDiversityPlant, 3000, AllProfile, false);
+        end;
 
         //If they have told us they're looking for "Bio Diversity", let's show them something meaningful
         SignupContext.Reset();
@@ -92,7 +93,8 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContext.SetRange(SignupContext.Value, 'Bio Diversity');
         if SignupContext.FindSet() then begin
             Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 2000, AllProfile, false);
-            Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 3000, AllProfile, false);
+            Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 4000, AllProfile, false);
+            Checklist.Insert(GuidedExperienceType::Tour, ObjectType::Page, Page::MS_BioDiversityMgmtPlants, 5000, AllProfile, false);
         end;
 
         //Let's speak their language with a great video, if they say they're 10-25 users in the company
@@ -100,7 +102,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContext.SetRange(SignupContext.KeyName, 'users');
         SignupContext.SetRange(SignupContext.Value, '10-25');
         if SignupContext.IsEmpty() then
-            Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 1000, AllProfile, false);
+            Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 8000, AllProfile, false);
 
     end;
 
@@ -161,7 +163,9 @@ codeunit 70074170 MS_CreateWelcomeExperience
         Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 1000, AllProfile, false);
         Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 2000, AllProfile, false);
         Checklist.Insert(Page::MS_BioDiversityMgmtPlants, SpotlightTourType::"Open in Excel", 3000, AllProfile, false);
-        Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 4000, AllProfile, false);
+        Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Report, Report::MS_BioDiversityPlant, 4000, AllProfile, false);
+        Checklist.Insert(GuidedExperienceType::Tour, ObjectType::Page, Page::MS_BioDiversityMgmtPlants, 5000, AllProfile, false);
+        Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/nqM79hlHuOs', 6000, AllProfile, false);
     end;
 
     internal procedure AddGuidedExperienceItems()
@@ -181,7 +185,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         //Clean up before we add
         GuidedExperience.Remove(GuidedExperienceType::"Assisted Setup", ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide);
         GuidedExperience.Remove(GuidedExperienceType::"Assisted Setup", ObjectType::Page, Page::MS_BioDiversityMgmtPlantGuide);
-
+        GuidedExperience.Remove(GuidedExperienceType::"Assisted Setup", ObjectType::Report, Report::MS_BioDiversityPlant);
 
         GetVendorListSpotlightTourDictionary(SpotlightTourTexts);
         GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::MS_BioDiversityMgmtPlants, SpotlightTourType::"Open in Excel", SpotlightTourTexts);
@@ -197,6 +201,8 @@ codeunit 70074170 MS_CreateWelcomeExperience
             ObjectType::Codeunit,
             Codeunit::MS_BioDiversityMgmtSetupList
             );
+        GuidedExperience.InsertApplicationFeature('Track your bio diversity goals', 'List of plants', 'Here, you can track your list of plants and their occurence over time. This could be your management report on bio diversity tracking.', 1, ObjectType::Report, report::MS_BioDiversityPlant);
+        GuidedExperience.InsertTour('Manage your plants here', 'Manage plants', 'Here you can manage and analyze your plants, so you are always on top of the current state and progress.', 3, Page::MS_BioDiversityMgmtPlants);
 
     end;
 
@@ -217,6 +223,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
     begin
         if not UserPersonalization.Get(UserSecurityId()) then begin
             UserPersonalization."User SID" := UserSecurityId();
+            UserPersonalization."User ID" := UserId();
             UserPersonalization."App ID" := GetThisAppID();
             UserPersonalization.Scope := UserPersonalization.Scope::Tenant;
             UserPersonalization.Role := 'Bio Diversity Manager';

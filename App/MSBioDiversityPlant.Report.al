@@ -2,15 +2,17 @@ report 70074170 MS_BioDiversityPlant
 {
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
-    DefaultRenderingLayout = LayoutName;
-    Caption = 'Bio Diversity Plant';
-
+    DefaultRenderingLayout = DefaultLayout;
+    Caption = 'Bio Diversity Tracking';
 
     dataset
     {
         dataitem(Plants; MS_BioDiversityMgmtPlant)
         {
             column(PlantCode; PlantCode)
+            {
+            }
+            column(ReportedOccurencesLastyear; ReportedOccurencesLastyear)
             {
             }
             column(Name; Name)
@@ -30,6 +32,9 @@ report 70074170 MS_BioDiversityPlant
 
     requestpage
     {
+        AboutTitle = 'Track Bio Diversity progress';
+        AboutText = 'Here you can track you *bio diversity progress*. This list is focused on **plants**. Printing to an Excel layout let''s you create beautiful looking visualizations which you know and love in *Excel*, updated with fresh data when you print.';
+
         layout
         {
             area(Content)
@@ -49,7 +54,7 @@ report 70074170 MS_BioDiversityPlant
 
     rendering
     {
-        layout(LayoutName)
+        layout(DefaultLayout)
         {
             Type = Excel;
             LayoutFile = 'BioDiversityPlant.xlsx';
