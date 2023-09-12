@@ -1,4 +1,7 @@
 {
     "al.codeAnalyzers": ["${CodeCop}"],
-    "al.enableCodeAnalysis": true
+    "al.enableCodeAnalysis": true,
+    "al.compilationOptions": {
+        "generateReportLayout": true
+      }
 }

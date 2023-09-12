@@ -1,0 +1,25 @@
+
+{
+    "plants":[    
+    {
+        "name": "Red Fescue",
+        "description": "A perennial grass that makes an excellent ground cover and is often planted for erosion control. It thrives in full sun to shade and is often planted for its shade tolerance. Can be manicured like turfgrass or left longer. Its thin, needle-like leaves dance in the wind to add movement to the garden."
+    },
+    {
+        "name": "Swiss cheese plant",
+        "description": "The swiss cheese plant produces bright, glossy leaves and makes a popular houseplant. It is originally native to tropical forest regions in Central America. The nickname swiss cheese plant refers to the small holes that develop in the plant's leaves. The long fruits resemble corncobs and smell sweet and fragrant when ripe."
+    },
+    {
+        "name": "Chinese money plant",
+        "description": "The chinese money plant makes a striking visual display as a houseplant with its large, circular, and shiny, leaves, which can have a diameter of over 15 cm. Although the plant does produce a small white flower, the main focus is the unique and showy leaves."
+    },
+    {
+        "name": "Common coleus",
+        "description": "The common coleus is a plant that comes in a wide range of colors and leaf forms. This plant, also known as Coleus scutellarioides, is native to Southeast Asia and is used as an herbal remedy in various cultures. Common coleus is a narcotic used by the Mazatec people of Mexico. In Cuba, this plant is considered invasive."
+    },
+    {
+        "name": "Bigleaf hydrangea",
+        "description": "The bigleaf hydrangea is a deciduous shrub native to Japan, and is known for its lush, oval, colorful inflorescence. The two types of Hydrangea macrophylla are mopheads - with large, ball-shaped, sterile flower clusters, and lace capes - with small round fertile flowers in the center, and sterile flowers on the outer side of each inflorescence. Depending on soil pH, blooms can change color from pink to blue."
+    }
+    ]
+}
