@@ -16,7 +16,10 @@ page 70074171 MS_BioDiversityMgmtPlants
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies a unique identifier of the plant';
-                    Caption = 'Plant Code';
+                    //Caption = 'Plant Code';
+
+
+                    CaptionML = ENU = 'Plant Code', DAN = 'Plantekode';
                 }
                 field(Name; 'Name')
                 {
