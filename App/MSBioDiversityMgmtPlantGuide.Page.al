@@ -5,6 +5,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
     SourceTable = MS_BioDiversityMgmtPlant;
     SourceTableTemporary = true;
     ApplicationArea = All;
+    Permissions = tabledata MS_BioDiversityMgmtPlant = ri;
 
     layout
     {
@@ -64,6 +65,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                 Caption = '';
                 InstructionalText = 'Step2 - Replace this text with some instructions.';
                 Visible = Step2Visible;
+                Editable = false;
                 //You might want to add fields here
 
                 repeater(TempPlants)
@@ -151,7 +153,6 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
     trigger OnOpenPage();
     var
     begin
-
         Step := Step::Start;
         EnableControls();
     end;
@@ -184,16 +185,8 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
         end;
     end;
 
-    local procedure StoreRecordVar();
-    var
-    //PlantsRec: Record MS_BioDiversityMgmtPlant;
-    begin
-
-    end;
-
     local procedure FinishAction();
     begin
-        StoreRecordVar();
         CurrPage.Close();
     end;
 
@@ -230,6 +223,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
 
     local procedure ShowStep3();
     begin
+        FlushRecordsIntoDB();
         Step3Visible := true;
 
         NextActionEnabled := false;
