@@ -83,6 +83,12 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                     {
                         ToolTip = 'Name of the plant';
                     }
+
+                    field("Family"; Rec.Family)
+                    {
+                        ToolTip = 'Family of the plant';
+                    }
+
                     field("Plant Description"; Rec.Description)
                     {
                         ToolTip = 'Description of the plant';
@@ -304,12 +310,12 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
             Plant.AsObject().Get('Family Description', FamilyDescription);
             Plant.AsObject().Get('Family Characteristics', FamilyCharacteristics);
 
-            if not PlantFamily.get(Format(FamilyName)) then begin
+            if not PlantFamily.get(Format(FamilyName.AsValue().AsText())) then begin
                 PlantFamily.Init();
-                PlantFamily.FamilyCode := Format(FamilyName);
-                PlantFamily.Name := Format(FamilyName);
-                PlantFamily.Description := Format(FamilyDescription);
-                PlantFamily.Characteristics := Format(FamilyCharacteristics);
+                PlantFamily.FamilyCode := Format(FamilyName.AsValue().AsText());
+                PlantFamily.Name := Format(FamilyName.AsValue().AsText());
+                PlantFamily.Description := Format(FamilyDescription.AsValue().AsText());
+                PlantFamily.Characteristics := Format(FamilyCharacteristics.AsValue().AsText());
                 PlantFamily.Insert();
             end;
 
@@ -318,10 +324,10 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
             Plant.AsObject().Get('Plant Characteristics', PlantDescription);
 
             Rec.Init();
-            Rec.PlantCode := Format(PlantName);
+            Rec.PlantCode := delchr(PlantName.AsValue().AsText(), '=', ' ');
             Rec.Name := CopyStr(PlantName.AsValue().AsText(), 1, 100);
             Rec.Description := CopyStr(PlantDescription.AsValue().AsText(), 1, 1000);
-            Rec.Family := Format(FamilyName);
+            Rec.Family := Format(FamilyName.AsValue().AsText());
             if not Rec.Insert() then
                 rec.Modify();
         end;
@@ -337,6 +343,8 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                 Plant.PlantCode := Rec.PlantCode;
                 Plant.Name := Rec.Name;
                 Plant.Description := Rec.Description;
+                Plant.Family := Rec.Family;
+                Plant.Occurrences := Random(999);
                 Plant.Insert();
             until Rec.Next() = 0;
     end;

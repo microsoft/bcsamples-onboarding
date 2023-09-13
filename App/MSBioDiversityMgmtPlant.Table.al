@@ -30,7 +30,7 @@ table 70074170 MS_BioDiversityMgmtPlant
             Description = 'Specifies how the plant is pollinated';
             DataClassification = SystemMetadata;
         }
-        field(6; ReportedOccurencesLastyear; Integer)
+        field(6; Occurrences; Integer)
         {
             Description = 'Specifies how often the plant has been reported spotted in nature the last year.';
             DataClassification = SystemMetadata;
