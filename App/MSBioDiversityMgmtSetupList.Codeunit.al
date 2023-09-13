@@ -9,8 +9,9 @@ codeunit 70074176 MS_BioDiversityMgmtSetupList
         ResponseMsg: HttpResponseMessage;
         OutStream: OutStream;
         InStream: InStream;
+
     begin
-        //First, enable the overall setup of the module
+        //First, enable the overall setup of the module if not already enabled
         SetupKey := 'BIODIVSETUP';
         if not BioDiversitySetup.Get(SetupKey) then begin
             BioDiversitySetup.Init();
@@ -20,9 +21,11 @@ codeunit 70074176 MS_BioDiversityMgmtSetupList
             Commit();
         end;
 
-
-        if HttpClient.Get('https://github.com/microsoft/bcsamples-onboarding/tree/main/Media/Resources/wizardbanner.png', ResponseMsg) then begin
+        //if HttpClient.Get('https://github.com/microsoft/bcsamples-onboarding/tree/main/Media/Resources/wizardbanner.jpg', ResponseMsg) then
+        if HttpClient.Get('https://raw.githubusercontent.com/microsoft/bcsamples-onboarding/main/Media/Resources/wizardbanner.png', ResponseMsg) then
             ResponseMsg.Content.ReadAs(InStream);
+
+        if ResponseMsg.IsSuccessStatusCode then begin
             BioDiversitySetup.SetupWizardBanner.CreateOutStream(OutStream);
             CopyStream(OutStream, InStream);
             BioDiversitySetup.Modify();
