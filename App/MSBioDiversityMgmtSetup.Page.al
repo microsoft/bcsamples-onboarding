@@ -12,6 +12,11 @@ page 70074173 MS_BioDiversityMgmtSetup
         {
             group(General)
             {
+                field(Enabled; Rec.Enabled)
+                {
+                    ToolTip = 'Specifies if the Bio Diversity solution is enabled.';
+                    ApplicationArea = All;
+                }
                 field(SetupWizardBanner; Rec.SetupWizardBanner)
                 {
                     ToolTip = 'This is our banner we use in steup wizards.';

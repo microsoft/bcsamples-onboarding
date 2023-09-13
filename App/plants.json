@@ -1,25 +1,85 @@
 
 {
     "plants":[    
-    {
-        "name": "Red Fescue",
-        "description": "A perennial grass that makes an excellent ground cover and is often planted for erosion control. It thrives in full sun to shade and is often planted for its shade tolerance. Can be manicured like turfgrass or left longer. Its thin, needle-like leaves dance in the wind to add movement to the garden."
-    },
-    {
-        "name": "Swiss cheese plant",
-        "description": "The swiss cheese plant produces bright, glossy leaves and makes a popular houseplant. It is originally native to tropical forest regions in Central America. The nickname swiss cheese plant refers to the small holes that develop in the plant's leaves. The long fruits resemble corncobs and smell sweet and fragrant when ripe."
-    },
-    {
-        "name": "Chinese money plant",
-        "description": "The chinese money plant makes a striking visual display as a houseplant with its large, circular, and shiny, leaves, which can have a diameter of over 15 cm. Although the plant does produce a small white flower, the main focus is the unique and showy leaves."
-    },
-    {
-        "name": "Common coleus",
-        "description": "The common coleus is a plant that comes in a wide range of colors and leaf forms. This plant, also known as Coleus scutellarioides, is native to Southeast Asia and is used as an herbal remedy in various cultures. Common coleus is a narcotic used by the Mazatec people of Mexico. In Cuba, this plant is considered invasive."
-    },
-    {
-        "name": "Bigleaf hydrangea",
-        "description": "The bigleaf hydrangea is a deciduous shrub native to Japan, and is known for its lush, oval, colorful inflorescence. The two types of Hydrangea macrophylla are mopheads - with large, ball-shaped, sterile flower clusters, and lace capes - with small round fertile flowers in the center, and sterile flowers on the outer side of each inflorescence. Depending on soil pH, blooms can change color from pink to blue."
-    }
+        {
+            "name": "Alpine Pasqueflower",
+            "description": "Alpine Pasqueflower is a small, delicate flower native to the mountains of Europe. It has a white, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in rocky, alpine meadows."
+        },
+        {
+            "name": "Anemone Coronaria",
+            "description": "Anemone Coronaria is a bright, colorful flower native to the Mediterranean region of Europe. It has a large, cup-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in gardens and meadows."
+        },
+        {
+            "name": "Bellflower",
+            "description": "Bellflower is a small, bell-shaped flower native to Europe. It has a white, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the summer and is often found in meadows and woodlands."
+        },
+        {
+            "name": "Bluebell",
+            "description": "Bluebell is a small, bell-shaped flower native to Europe. It has a blue, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in woodlands and meadows."
+        },
+        {
+            "name": "Buttercup",
+            "description": "Buttercup is a small, yellow flower native to Europe. It has a yellow, cup-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in meadows and woodlands."
+        },
+        {
+            "name": "Cowslip",
+            "description": "Cowslip is a small, yellow flower native to Europe. It has a yellow, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in meadows and woodlands."
+        },
+        {
+            "name": "Daffodil",
+            "description": "Daffodil is a bright, yellow flower native to Europe. It has a yellow, trumpet-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in gardens and meadows."
+        },
+        {
+            "name": "Daisy",
+            "description": "Daisy is a small, white flower native to Europe. It has a white, daisy-shaped flower with a yellow center and a long, thin stem. It blooms in the summer and is often found in meadows and woodlands."
+        },
+        {
+            "name": "Foxglove",
+            "description": "Foxglove is a tall, purple flower native to Europe. It has a purple, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the summer and is often found in woodlands and meadows."
+        },
+        {
+            "name": "Gentian",
+            "description": "Gentian is a tall, blue flower native to Europe. It has a blue, trumpet-shaped flower with a yellow center and a long, thin stem. It blooms in the summer and is often found in meadows and woodlands."
+        },
+        {
+            "name": "Heather",
+            "description": "Heather is a small, purple flower native to Europe. It has a purple, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the summer and is often found in meadows and woodlands."
+        },
+        {
+            "name": "Iris",
+            "description": "Iris is a tall, colorful flower native to Europe. It has a colorful, sword-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in gardens and meadows."
+        },
+        {
+            "name": "Lily of the Valley",
+            "description": "Lily of the Valley is a small, white flower native to Europe. It has a white, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in woodlands and meadows."
+        },
+        {
+            "name": "Meadow Saffron",
+            "description": "Meadow Saffron is a tall, yellow flower native to Europe. It has a yellow, cup-shaped flower with a yellow center and a long, thin stem. It blooms in the fall and is often found in meadows and woodlands."
+        },
+        {
+            "name": "Pansy",
+            "description": "Pansy is a small, colorful flower native to Europe. It has a colorful, heart-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in gardens and meadows."
+        },
+        {
+            "name": "Primrose",
+            "description": "Primrose is a small, yellow flower native to Europe. It has a yellow, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in meadows and woodlands."
+        },
+        {
+            "name": "Snowdrop",
+            "description": "Snowdrop is a small, white flower native to Europe. It has a white, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the winter and is often found in woodlands and meadows."
+        },
+        {
+            "name": "Sunflower",
+            "description": "Sunflower is a tall, yellow flower native to Europe. It has a yellow, daisy-shaped flower with a yellow center and a long, thin stem. It blooms in the summer and is often found in meadows and gardens."
+        },
+        {
+            "name": "Tulip",
+            "description": "Tulip is a tall, colorful flower native to Europe. It has a colorful, cup-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in gardens and meadows."
+        },
+        {
+            "name": "Violet",
+            "description": "Violet is a small, purple flower native to Europe. It has a purple, bell-shaped flower with a yellow center and a long, thin stem. It blooms in the spring and is often found in woodlands and meadows."
+        }
     ]
 }

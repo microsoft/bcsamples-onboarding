@@ -58,7 +58,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SignupContextValues."Signup Context" := SignupContextValues."Signup Context"::MS_BioDiversityMgmt;
         SignupContextValues.Insert();
 
-        //Now, we read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
+        //Wwe read the SignupContext table where the profiler answers have been stored via the signupContext parameter in the URL when they started BC for the first time
 
         /* --- DO STUFF BASED ON THE CUSTOMER PROFILE ---  
         Here is where you check the SignupContext table for the profiler answers.
@@ -142,15 +142,6 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SpotlightTourTexts.Add(SpotlightTourText::Step2Text, EditPlantsInExcelStep2DescrTxt);
     end;
 
-    /*
-        local procedure AddRoleToList(var AllProfile: Record "All Profile"; var TempAllProfile: Record "All Profile" temporary)
-        begin
-            if AllProfile.FindFirst() then begin
-                TempAllProfile.TransferFields(AllProfile);
-                TempAllProfile.Insert();
-            end;
-        end;
-    */
     internal procedure FakeTestsWhenNotInSignup()
     var
         //Define variables we need to insert Checklists
@@ -177,10 +168,40 @@ codeunit 70074170 MS_CreateWelcomeExperience
         SpotlightTourType: Enum "Spotlight Tour Type";
         GuidedExperienceType: Enum "Guided Experience Type";
         SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text];
+        DefineInsectsTitle: Text;
+        DefineInsectsShortTitle: Text;
+        DefineInsectsDescription: Text;
+        DefinePlantsTitle: Text;
+        DefinePlantsShortTitle: Text;
+        DefinePlantsDescription: Text;
+        BioDiversityMgmtSetuplistTitle: Text;
+        BioDiversityMgmtSetuplistShortTitle: Text;
+        BioDiversityMgmtSetuplistDescription: Text;
+        PlantReportTitle: text;
+        PlantReportShortTitle: text;
+        PlantReportDescription: text;
+        PlantsPageTitle: text;
+        PlantsPageShortTitle: text;
+        PlantsPageDescription: text;
     begin
         //Add our Guided Experience Items we want to potentially add to the checklist
         //Add the guided experience items. Note, that here we just load three different videos for the "system", "users" and "interest" questions from the profiler
         //Add the checklist items you think makes sense to greet the user with, based on their profile.
+        DefineInsectsTitle := '1: Define the list of insects you want to work with';
+        DefineInsectsShortTitle := '1: Get the list of insects from Github';
+        DefineInsectsDescription := 'Insects play a crucial role in bio diversity. Start tracking them today! Import a list of known insects from Github here.';
+        DefinePlantsTitle := '2: Let us define the list of plants you want to work with';
+        DefinePlantsShortTitle := '1: Get the list of plants from Github';
+        DefinePlantsDescription := 'Plants play a crucial role in bio diversity. Start tracking them today! Import a list of known plants from Github here.';
+        BioDiversityMgmtSetuplistTitle := 'Set up Bio Diversity Management';
+        BioDiversityMgmtSetuplistShortTitle := 'Start tracking bio diversity';
+        BioDiversityMgmtSetuplistDescription := 'We have created a nice and easy checklist of what you need to set up Bio Diversity Management. We will guide you every step of the way!';
+        PlantReportTitle := 'Track how plants in the ecosystem';
+        PlantReportShortTitle := 'Track your plants';
+        PlantReportDescription := 'Track your list of plants and their occurence in a board ready report. Bio diversity management has never been easier!';
+        PlantsPageTitle := 'Manage your plants lifecycle here';
+        PlantsPageShortTitle := 'Plants lifecycle';
+        PlantsPageDescription := 'Manage and analyze your plants here, so you are always on top of the health of the ecosystem you are managing.';
 
         //Clean up before we add
         GuidedExperience.Remove(GuidedExperienceType::"Assisted Setup", ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide);
@@ -191,18 +212,11 @@ codeunit 70074170 MS_CreateWelcomeExperience
         GuidedExperience.InsertSpotlightTour(SystemTitleTxt, SystemShortTitleTxt, SystemDescriptionTxt, 2, Page::MS_BioDiversityMgmtPlants, SpotlightTourType::"Open in Excel", SpotlightTourTexts);
         GuidedExperience.InsertVideo(UsersTitleTxt, UsersShortTitleTxt, UsersDescriptionTxt, 1, 'https://www.youtube.com/embed/nqM79hlHuOs', VideoCategory::GettingStarted);
         GuidedExperience.InsertVideo(InterestTitleTxt, InterestShortTitleTxt, InterestDescriptionTxt, 1, 'https://www.youtube.com/embed/YpWD4ZrLobI', VideoCategory::GettingStarted);
-        GuidedExperience.InsertAssistedSetup('1: Let us define the list of insects you want to work with', '1: Get the list of insects', 'Shoe sizes are the foundation of every shoe management. Let us define them here. It is easy!', 1, ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
-        GuidedExperience.InsertAssistedSetup('2: Let us define the list of plants you want to work with', '2: Get the list of plants', 'Here we help you set up how Shoe Management should work for you in your business.', 1, ObjectType::Page, Page::MS_BioDiversityMgmtPlantGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
-        GuidedExperience.InsertApplicationFeature(
-            'Setting up Bio Diversity Mgmt. is easy!',
-            'Bio Diversity Mgmt. Setup',
-            'We have collected all the steps you need to set up Bio Diversity Management into a nice checklist. We will guide you every step of the way!',
-            1,
-            ObjectType::Codeunit,
-            Codeunit::MS_BioDiversityMgmtSetupList
-            );
-        GuidedExperience.InsertApplicationFeature('Track your bio diversity goals', 'List of plants', 'Here, you can track your list of plants and their occurence over time. This could be your management report on bio diversity tracking.', 1, ObjectType::Report, report::MS_BioDiversityPlant);
-        GuidedExperience.InsertTour('Manage your plants here', 'Manage plants', 'Here you can manage and analyze your plants, so you are always on top of the current state and progress.', 3, Page::MS_BioDiversityMgmtPlants);
+        GuidedExperience.InsertAssistedSetup(DefineInsectsTitle, DefineInsectsShortTitle, DefineInsectsDescription, 1, ObjectType::Page, Page::MS_BioDiversityMgmtInsectGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertAssistedSetup(DefinePlantsTitle, DefinePlantsShortTitle, DefinePlantsDescription, 1, ObjectType::Page, Page::MS_BioDiversityMgmtPlantGuide, AssistedSetupGroup::MS_BioDiversity, '', VideoCategory::GettingStarted, '');
+        GuidedExperience.InsertApplicationFeature(BioDiversityMgmtSetuplistTitle, BioDiversityMgmtSetuplistShortTitle, BioDiversityMgmtSetuplistDescription, 1, ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList);
+        GuidedExperience.InsertApplicationFeature(PlantReportTitle, PlantReportShortTitle, PlantReportDescription, 1, ObjectType::Report, report::MS_BioDiversityPlant);
+        GuidedExperience.InsertTour(PlantsPageTitle, PlantsPageShortTitle, PlantsPageDescription, 3, Page::MS_BioDiversityMgmtPlants);
 
     end;
 

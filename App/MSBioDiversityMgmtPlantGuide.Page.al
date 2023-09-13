@@ -26,7 +26,6 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                 }
             }
 
-            /*
             group(FinishedBanner)
             {
                 Caption = '';
@@ -39,7 +38,6 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                     ShowCaption = false;
                 }
             }
-            */
 
             group(Step1)
             {
