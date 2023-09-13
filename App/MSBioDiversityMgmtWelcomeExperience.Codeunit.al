@@ -4,7 +4,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         //Define the texts for the Guided Experience Items the users will see in their checklists
         //If the user has profiled as coming from Excel, we want to show them a checklist item that makes them feel welcomed right off the bat
         SystemShortTitleTxt: Label 'Excel users love us';
-        SystemTitleTxt: Label 'Excel users love using Business Central';
+        SystemTitleTxt: Label 'Easily work with plant data in Excel';
         SystemDescriptionTxt: Label 'With a seamless integration to Excel, you can easily work with data in Excel, and even import it back into Business Central. Great for manipulating lists of data.';
 
         //Depending on the user's company profile, add a Guided Experience Item that shows we know what they care about
@@ -13,9 +13,9 @@ codeunit 70074170 MS_CreateWelcomeExperience
         UsersDescriptionTxt: Label 'Business Central is great for companies with a user base of 10-25, but it does not stop there. Business Central empowers you to grow your business. See the video to learn how.';
 
         //When the user answered questions in the profiler (on your web site), ask them what they're looking for, and load a Guided Experience Item that confirms they've gone to the right place
-        InterestShortTitleTxt: Label 'Trade is in our DNA';
-        InterestTitleTxt: Label 'Trade is a cornerstone of Business Central';
-        InterestDescriptionTxt: Label 'Business Central is one of the Worlds most powerful business solutions when it comes to Basic trade. Trade can be set up in any variance you want to help you run your business processes.';
+        InterestShortTitleTxt: Label 'Become a champion';
+        InterestTitleTxt: Label 'Bio Diversity Mgmt. will assist you';
+        InterestDescriptionTxt: Label 'In this short video we will show you how Bio Diversity Management can help you become a champion for bio diversity and help make the World a better place.';
 
         OnboardingSampleValueTxt: Label 'bcsamples-onboarding', Locked = true;
 
@@ -151,8 +151,8 @@ codeunit 70074170 MS_CreateWelcomeExperience
         GuidedExperienceType: Enum "Guided Experience Type";
     begin
         AddGuidedExperienceItems();
-        Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 1000, AllProfile, false);
-        Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 2000, AllProfile, false);
+        Checklist.Insert(GuidedExperienceType::Video, 'https://www.youtube.com/embed/YpWD4ZrLobI', 1000, AllProfile, false);
+        Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Codeunit, Codeunit::MS_BioDiversityMgmtSetupList, 2000, AllProfile, false);
         Checklist.Insert(Page::MS_BioDiversityMgmtPlants, SpotlightTourType::"Open in Excel", 3000, AllProfile, false);
         Checklist.Insert(GuidedExperienceType::"Application Feature", ObjectType::Report, Report::MS_BioDiversityPlant, 4000, AllProfile, false);
         Checklist.Insert(GuidedExperienceType::Tour, ObjectType::Page, Page::MS_BioDiversityMgmtPlants, 5000, AllProfile, false);
