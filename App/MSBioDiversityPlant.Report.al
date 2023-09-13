@@ -12,7 +12,7 @@ report 70074170 MS_BioDiversityPlant
             column(PlantCode; PlantCode)
             {
             }
-            column(ReportedOccurencesLastyear; ReportedOccurencesLastyear)
+            column(Occurrences; Occurrences)
             {
             }
             column(Name; Name)

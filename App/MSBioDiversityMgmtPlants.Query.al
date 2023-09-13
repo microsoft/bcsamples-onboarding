@@ -27,7 +27,7 @@ query 70074170 MS_BioDiversityMgmtPlants
             column(Description; Description)
             {
             }
-            column("Occurrences"; ReportedOccurencesLastyear)
+            column(Occurrences; Occurrences)
             {
             }
 

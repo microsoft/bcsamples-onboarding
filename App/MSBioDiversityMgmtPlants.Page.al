@@ -32,6 +32,13 @@ page 70074171 MS_BioDiversityMgmtPlants
                     ToolTip = 'Specifies a description of the plant';
                     Caption = 'Description';
                 }
+                field(Family; Rec.Family)
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the family the plant belongs to';
+                    Caption = 'Family';
+                }
+
                 field(IsPollinator; Rec.IsPollinator)
                 {
                     ApplicationArea = All;
@@ -44,7 +51,7 @@ page 70074171 MS_BioDiversityMgmtPlants
                     ToolTip = 'Specifies what pollinates this plant.';
                     Caption = 'Pollinated By';
                 }
-                field(ReportedOccurencesLastyear; Rec.ReportedOccurencesLastyear)
+                field(ReportedOccurencesLastyear; Rec.Occurrences)
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies how often this plant was reported spotted in nature last year.';
