@@ -196,7 +196,7 @@ codeunit 70074170 MS_CreateWelcomeExperience
         BioDiversityMgmtSetuplistTitle := 'Set up Bio Diversity Management';
         BioDiversityMgmtSetuplistShortTitle := 'Start tracking bio diversity';
         BioDiversityMgmtSetuplistDescription := 'We have created a nice and easy checklist of what you need to set up Bio Diversity Management. We will guide you every step of the way!';
-        PlantReportTitle := 'Track how plants in the ecosystem';
+        PlantReportTitle := 'Track your plants in the ecosystem';
         PlantReportShortTitle := 'Track your plants';
         PlantReportDescription := 'Track your list of plants and their occurence in a board ready report. Bio diversity management has never been easier!';
         PlantsPageTitle := 'Manage your plants lifecycle here';
