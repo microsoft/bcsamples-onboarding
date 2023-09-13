@@ -35,6 +35,12 @@ table 70074170 MS_BioDiversityMgmtPlant
             Description = 'Specifies how often the plant has been reported spotted in nature the last year.';
             DataClassification = SystemMetadata;
         }
+        field(7; Family; Code[50])
+        {
+            TableRelation = MS_BioDiversityMgmtPlantFamily;
+            Description = 'Specifies the family of plants to which this plant belongs.';
+            DataClassification = SystemMetadata;
+        }
     }
     keys
     {

@@ -27,6 +27,9 @@ report 70074170 MS_BioDiversityPlant
             column(PollinatedBy; PollinatedBy)
             {
             }
+            column(Family; Family)
+            {
+            }
         }
     }
 
