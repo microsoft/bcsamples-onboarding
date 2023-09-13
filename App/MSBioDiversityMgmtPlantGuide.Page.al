@@ -294,16 +294,34 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
 
     local procedure LoadJsonResponseToTempTable(Plants: JsonToken)
     var
-        Plant, PlantName, PlantDescription : JsonToken;
+        PlantFamily: Record MS_BioDiversityMgmtPlantFamily;
+        Plant, PlantName, PlantDescription, FamilyName, FamilyDescription, FamilyCharacteristics : JsonToken;
     begin
         foreach Plant in Plants.AsArray() do begin
-            Plant.AsObject().Get('name', PlantName);
-            Plant.AsObject().Get('description', PlantDescription);
+
+            //Family first
+            Plant.AsObject().Get('Family Name', FamilyName);
+            Plant.AsObject().Get('Family Description', FamilyDescription);
+            Plant.AsObject().Get('Family Characteristics', FamilyCharacteristics);
+
+            if not PlantFamily.get(Format(FamilyName)) then begin
+                PlantFamily.Init();
+                PlantFamily.FamilyCode := Format(FamilyName);
+                PlantFamily.Name := Format(FamilyName);
+                PlantFamily.Description := Format(FamilyDescription);
+                PlantFamily.Characteristics := Format(FamilyCharacteristics);
+                PlantFamily.Insert();
+            end;
+
+
+            Plant.AsObject().Get('Name', PlantName);
+            Plant.AsObject().Get('Plant Characteristics', PlantDescription);
 
             Rec.Init();
             Rec.PlantCode := Format(PlantName);
             Rec.Name := CopyStr(PlantName.AsValue().AsText(), 1, 100);
             Rec.Description := CopyStr(PlantDescription.AsValue().AsText(), 1, 1000);
+            Rec.Family := Format(FamilyName);
             if not Rec.Insert() then
                 rec.Modify();
         end;
