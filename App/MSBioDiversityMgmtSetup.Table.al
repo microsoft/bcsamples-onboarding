@@ -19,6 +19,7 @@ table 70074175 MS_BioDiversityMgmtSetup
         }
         field(3; SetupWizardBanner; Blob)
         {
+            Subtype = Bitmap;
             Description = 'Specifies the banner to be used in assisted setups.';
             DataClassification = SystemMetadata;
         }

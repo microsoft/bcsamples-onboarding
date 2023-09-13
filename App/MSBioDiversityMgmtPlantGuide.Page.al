@@ -11,32 +11,22 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
     {
         area(content)
         {
-            //group(StandardBanner)
-            group(StandardBanner)
-            {
-                Caption = '';
-                Editable = false;
-                Visible = TopBannerVisible and not FinishActionEnabled;
-                field(MediaResourcesStandard; MediaResourcesStandard."Media Reference")
-                //field(BioDiversitySetup; BioDiversitySetup.SetupWizardBanner)
-                {
-                    ApplicationArea = All;
-                    Editable = false;
-                    ShowCaption = false;
-                }
-            }
             group(CustomBanner)
             {
                 Caption = '';
                 Editable = false;
-                Visible = CustomBannerVisible and not FinishActionEnabled;
+                Visible = CustomBannerVisible;
+
                 field(BioDiversitySetup; BioDiversitySetup.SetupWizardBanner)
                 {
                     ApplicationArea = All;
                     Editable = false;
+                    MultiLine = true;
                     ShowCaption = false;
                 }
             }
+
+            /*
             group(FinishedBanner)
             {
                 Caption = '';
@@ -49,6 +39,7 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
                     ShowCaption = false;
                 }
             }
+            */
 
             group(Step1)
             {
@@ -280,9 +271,10 @@ page 70074176 MS_BioDiversityMgmtPlantGuide
         SetupKey: Code[20];
     begin
         SetupKey := 'BIODIVSETUP';
-        if BioDiversitySetup.Get(SetupKey) then
+        if BioDiversitySetup.Get(SetupKey) then begin
+            BioDiversitySetup.CalcFields(SetupWizardBanner);
             CustomBannerVisible := BioDiversitySetup.SetupWizardBanner.HasValue();
-
+        end;
     end;
 
     local procedure LoadPlantsFromGitHub() Plants: JsonToken
