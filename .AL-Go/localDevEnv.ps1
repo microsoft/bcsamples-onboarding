@@ -5,26 +5,50 @@
 #
 Param(
     [string] $containerName = "",
+    [ValidateSet("UserPassword", "Windows")]
     [string] $auth = "",
     [pscredential] $credential = $null,
     [string] $licenseFileUrl = "",
-    [string] $insiderSasToken = "",
-    [switch] $fromVSCode
+    [switch] $fromVSCode,
+    [switch] $accept_insiderEula,
+    [switch] $clean
 )
 
-$ErrorActionPreference = "stop"
-Set-StrictMode -Version 2.0
+$errorActionPreference = "Stop"; $ProgressPreference = "SilentlyContinue"; Set-StrictMode -Version 2.0
+
+function DownloadHelperFile {
+    param(
+        [string] $url,
+        [string] $folder
+    )
+
+    $prevProgressPreference = $ProgressPreference; $ProgressPreference = 'SilentlyContinue'
+    $name = [System.IO.Path]::GetFileName($url)
+    Write-Host "Downloading $name from $url"
+    $path = Join-Path $folder $name
+    Invoke-WebRequest -UseBasicParsing -uri $url -OutFile $path
+    $ProgressPreference = $prevProgressPreference
+    return $path
+}
 
 try {
-$webClient = New-Object System.Net.WebClient
-$webClient.CachePolicy = New-Object System.Net.Cache.RequestCachePolicy -argumentList ([System.Net.Cache.RequestCacheLevel]::NoCacheNoStore)
-$webClient.Encoding = [System.Text.Encoding]::UTF8
-Write-Host "Downloading GitHub Helper module"
-$GitHubHelperPath = "$([System.IO.Path]::GetTempFileName()).psm1"
-$webClient.DownloadFile('https://raw.githubusercontent.com/microsoft/AL-Go-Actions/preview/Github-Helper.psm1', $GitHubHelperPath)
-Write-Host "Downloading AL-Go Helper script"
-$ALGoHelperPath = "$([System.IO.Path]::GetTempFileName()).ps1"
-$webClient.DownloadFile('https://raw.githubusercontent.com/microsoft/AL-Go-Actions/preview/AL-Go-Helper.ps1', $ALGoHelperPath)
+Clear-Host
+Write-Host
+Write-Host -ForegroundColor Yellow @'
+  _                     _   _____             ______
+ | |                   | | |  __ \           |  ____|
+ | |     ___   ___ __ _| | | |  | | _____   __ |__   _ ____   __
+ | |    / _ \ / __/ _` | | | |  | |/ _ \ \ / /  __| | '_ \ \ / /
+ | |____ (_) | (__ (_| | | | |__| |  __/\ V /| |____| | | \ V /
+ |______\___/ \___\__,_|_| |_____/ \___| \_/ |______|_| |_|\_/
+
+'@
+
+$tmpFolder = Join-Path ([System.IO.Path]::GetTempPath()) "$([Guid]::NewGuid().ToString())"
+New-Item -Path $tmpFolder -ItemType Directory -Force | Out-Null
+$GitHubHelperPath = DownloadHelperFile -url 'https://raw.githubusercontent.com/microsoft/AL-Go-Actions/v7.1/Github-Helper.psm1' -folder $tmpFolder
+$ALGoHelperPath = DownloadHelperFile -url 'https://raw.githubusercontent.com/microsoft/AL-Go-Actions/v7.1/AL-Go-Helper.ps1' -folder $tmpFolder
+DownloadHelperFile -url 'https://raw.githubusercontent.com/microsoft/AL-Go-Actions/v7.1/Packages.json' -folder $tmpFolder | Out-Null
 
 Import-Module $GitHubHelperPath
 . $ALGoHelperPath -local
@@ -32,19 +56,8 @@ Import-Module $GitHubHelperPath
 $baseFolder = GetBaseFolder -folder $PSScriptRoot
 $project = GetProject -baseFolder $baseFolder -projectALGoFolder $PSScriptRoot
 
-Clear-Host
-Write-Host
-Write-Host -ForegroundColor Yellow @'
-  _                     _   _____             ______            
- | |                   | | |  __ \           |  ____|           
- | |     ___   ___ __ _| | | |  | | _____   __ |__   _ ____   __
- | |    / _ \ / __/ _` | | | |  | |/ _ \ \ / /  __| | '_ \ \ / /
- | |____ (_) | (__ (_| | | | |__| |  __/\ V /| |____| | | \ V / 
- |______\___/ \___\__,_|_| |_____/ \___| \_/ |______|_| |_|\_/  
-                                                                
-'@
-
 Write-Host @'
+
 This script will create a docker based local development environment for your project.
 
 NOTE: You need to have Docker installed, configured and be able to create Business Central containers for this to work.
@@ -55,7 +68,7 @@ The script will also modify launch.json to have a Local Sandbox configuration po
 
 '@
 
-$settings = ReadSettings -baseFolder $baseFolder -project $project -userName $env:USERNAME
+$settings = ReadSettings -baseFolder $baseFolder -project $project -userName $env:USERNAME -workflowName 'localDevEnv'
 
 Write-Host "Checking System Requirements"
 $dockerProcess = (Get-Process "dockerd" -ErrorAction Ignore)
@@ -102,8 +115,8 @@ if (-not $credential) {
 
 if (-not $licenseFileUrl) {
     if ($settings.type -eq "AppSource App") {
-        $description = "When developing AppSource Apps, your local development environment needs the developer licensefile with permissions to your AppSource app object IDs"
-        $default = ""
+        $description = "When developing AppSource Apps for Business Central versions prior to 22, your local development environment needs the developer licensefile with permissions to your AppSource app object IDs"
+        $default = "none"
     }
     else {
         $description = "When developing PTEs, you can optionally specify a developer licensefile with permissions to object IDs of your dependant apps"
@@ -132,7 +145,8 @@ CreateDevEnv `
     -auth $auth `
     -credential $credential `
     -licenseFileUrl $licenseFileUrl `
-    -insiderSasToken $insiderSasToken
+    -accept_insiderEula:$accept_insiderEula `
+    -clean:$clean
 }
 catch {
     Write-Host -ForegroundColor Red "Error: $($_.Exception.Message)`nStacktrace: $($_.scriptStackTrace)"
